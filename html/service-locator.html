@@ -105,11 +105,9 @@ more flexible, more configurable cousin of the Singleton pattern. When used <spa
 name="well">well</span>, it can make your codebase more flexible with little
 runtime cost.</p>
 <aside name="well">
-
 <p>Conversely, when used poorly, it carries with it all of the baggage of the
 Singleton pattern with worse runtime performance.</p>
 </aside>
-
 <h2><a href="#keep-in-mind" name="keep-in-mind">Keep in Mind</a></h2>
 <p>The core difficulty with a service locator is that it takes a dependency&#8202;&mdash;&#8202;a
 bit of coupling between two pieces of code&#8202;&mdash;&#8202;and defers wiring it up until
@@ -198,7 +196,6 @@ define:</p>
 
 
 <aside name="di">
-
 <p>The technique this uses is called <em>dependency injection</em>, an awkward bit of
 jargon for a very simple idea. Say you have one class that depends on another.
 In our case, our <code>Locator</code> class needs an instance of the <code>Audio</code> service.
@@ -206,7 +203,6 @@ Normally, the locator would be responsible for constructing that instance itself
 Dependency injection instead says that outside code is responsible for
 <em>injecting</em> that dependency into the object that needs it.</p>
 </aside>
-
 <p>The static <code>getAudio()</code> function does the locating. We can call it from
 anywhere in the codebase, and it will give us back an instance of our <code>Audio</code>
 service to use:</p>
@@ -241,13 +237,11 @@ it has one big shortcoming: if we try to use the service <span
 name="temporal">before</span> a provider has been registered, it returns <code>NULL</code>.
 If the calling code doesn&#8217;t check that, we&#8217;re going to crash the game.</p>
 <aside name="temporal">
-
 <p>I sometimes hear this called &#8220;temporal coupling&#8221;&#8202;&mdash;&#8202;two separate pieces of code
 that must be called in the right order for the program to work correctly. All
 stateful software has some degree of this, but as with other kinds of coupling,
 reducing temporal coupling makes the codebase easier to manage.</p>
 </aside>
-
 <p>Fortunately, there&#8217;s another design pattern called &#8220;Null Object&#8221; that we can use
 to address this. The basic idea is that in places where we would return <code>NULL</code>
 when we fail to find or create an object, we instead return a special object
@@ -296,7 +290,6 @@ anything. Now, we change our locator to this:</p>
 
 
 <aside name="ref">
-
 <p>You may notice we&#8217;re returning the service by reference instead of by pointer
 now. Since references in C++ are (in theory!) never <code>NULL</code>, returning a
 reference is a hint to users of the code that they can expect to always get a
@@ -307,7 +300,6 @@ on to make sure that the locator initially correctly defaults to the null
 provider. In return, it moves the branch out of <code>getAudio()</code>, which will save us
 a couple of cycles every time the service is accessed.</p>
 </aside>
-
 <p>Calling code will never know that a &#8220;real&#8221; service wasn&#8217;t found, nor does it
 have to worry about handling <code>NULL</code>. It&#8217;s guaranteed to always get back a valid
 object.</p>
@@ -316,14 +308,12 @@ object.</p>
 way to do so: simply don&#8217;t register a provider for the service, and the locator
 will default to a null provider.</p>
 <aside name="disable">
-
 <p>Turning off audio is handy during development. It frees up some memory and CPU
 cycles. More importantly, when you break into a debugger just as a loud sound
 starts playing, it saves you from having your eardrums shredded. There&#8217;s nothing
 like twenty milliseconds of a scream sound effect looping at full volume to get
 your blood flowing in the morning.</p>
 </aside>
-
 <h3><a href="#logging-decorator" name="logging-decorator">Logging decorator</a></h3>
 <p>Now that our system is pretty robust, let&#8217;s discuss another refinement this
 pattern lets us do&#8202;&mdash;&#8202;decorated services. I&#8217;ll explain with an example.</p>

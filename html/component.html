@@ -41,10 +41,8 @@ covered, so ours will star a Danish <span name="baker">baker</span>, Bj&oslash;r
 stands to reason that we&#8217;ll have a class representing our friendly pastry chef,
 and it will contain everything he does in the game.</p>
 <aside name="baker">
-
 <p>Brilliant game ideas like this are why I&#8217;m a programmer and not a designer.</p>
 </aside>
-
 <p>Since the player controls him, that means reading controller input and
 translating that input into motion. And, of course, he needs to interact with the level,
 so some physics and collision go in there. Once that&#8217;s done, he&#8217;s got to show
@@ -79,7 +77,6 @@ giant knotted ball of code like:</p>
 something about physics, graphics, and sound just to make sure they don&#8217;t break
 anything.</p>
 <aside name="coupling">
-
 <p>While coupling like this sucks in <em>any</em> game, it&#8217;s even worse on modern games
 that use concurrency. On multi-core hardware, it&#8217;s vital that code is running on
 multiple threads simultaneously. One common way to split a game across threads
@@ -91,7 +88,6 @@ an <code>UpdateSounds()</code> method that must be called from one thread and a
 <code>RenderGraphics()</code> method that must be called from another is begging for
 those kinds of bugs to happen.</p>
 </aside>
-
 <p>These two problems compound each other; the class touches so many domains that
 every programmer will have to work on it, but it&#8217;s so huge that doing so is a
 nightmare. If it gets bad enough, coders will start putting hacks in other parts
@@ -128,7 +124,6 @@ decorations but can be touched: boxes, boulders, and trees. <em>Zones</em> are t
 opposite of decorations&#8202;&mdash;&#8202;invisible but interactive. They&#8217;re useful for things
 like triggering a cutscene when Bj&oslash;rn enters an area.</p>
 <aside name="inheritance">
-
 <p>When object-oriented programming first hit the scene, inheritance was the
 shiniest tool in its toolbox. It was considered the ultimate code-reuse hammer,
 and coders swung it often. Since then, we&#8217;ve learned the hard way that it&#8217;s a
@@ -139,7 +134,6 @@ inheritance when possible. Instead of sharing code between two classes by having
 them <em>inherit</em> from the same class, we do so by having them both <em>own an
 instance</em> of the same class.</p>
 </aside>
-
 <p>Now, consider how we&#8217;d set up an inheritance hierarchy for those classes if we
 weren&#8217;t using components. A first pass might look like:</p>
 <p><img src="images/component-uml.png" alt="A class diagram. Zone has collision code and inherits from GameObject. Decoration also inherits from GameObject and has rendering code. Prop inherits from Zone but then has redundant rendering code." /></p>
@@ -150,13 +144,11 @@ orientation. <code>Zone</code> inherits from that and adds collision detection. 
 from <code>Decoration</code> to reuse the <em>rendering</em> code without running into the <span
 name="diamond">Deadly Diamond</span>.</p>
 <aside name="diamond">
-
 <p>The &#8220;Deadly Diamond&#8221; occurs in class hierarchies with multiple inheritance where
 there are two different paths to the same base class. The pain that causes is a
 bit out of the scope of this book, but understand that they named it
 &#8220;deadly&#8221; for a reason.</p>
 </aside>
-
 <p>We could flip things around so that <code>Prop</code> inherits from <code>Decoration</code>, but then
 we end up having to duplicate the <em>collision</em> code. Either way, there&#8217;s no clean
 way to reuse the collision and rendering code between the classes that need it
@@ -170,7 +162,6 @@ classes: <code>PhysicsComponent</code> and <code>GraphicsComponent</code>. A dec
 opposite, and a prop has both components. No code duplication, no multiple
 inheritance, and only three classes instead of four.</p>
 <aside name="menu">
-
 <p>A restaurant menu is a good analogy. If each entity is a monolithic class, it&#8217;s
 like you can only order combos. We need to have a separate class for each
 possible <em>combination</em> of features. To satisfy every customer, we would need
@@ -179,7 +170,6 @@ dozens of combos.</p>
 dishes they want, and the menu is a list of the dishes they can choose
 from.</p>
 </aside>
-
 <p>Components are basically plug-and-play for objects. They let us build complex
 entities with rich behavior by plugging different reusable component
 objects into sockets on the entity. Think software Voltron.</p>
@@ -188,7 +178,6 @@ objects into sockets on the entity. Think software Voltron.</p>
 code for each is placed in its own <strong><span name="component">component</span>
 class</strong>. The entity is reduced to a simple <strong>container of components</strong>.</p>
 <aside name="component">
-
 <p>&#8220;Component&#8221;, like &#8220;Object&#8221;, is one of those words that means everything and
 nothing in programming. Because of that, it&#8217;s been used to describe a few
 concepts. In business software, there&#8217;s a &#8220;Component&#8221; design pattern that
@@ -199,7 +188,6 @@ about documenting existing practices, I don&#8217;t have the luxury of coining a
 term. So, following in the footsteps of XNA, Delta3D, and others, &#8220;Component&#8221; it
 is.</p>
 </aside>
-
 <h2><a href="#when-to-use-it" name="when-to-use-it">When to Use It</a></h2>
 <p>Components are most commonly found within the core class that defines the
 entities in a game, but they may be useful in other places as well. This pattern can
@@ -233,13 +221,11 @@ have to get the component you want, <em>then</em> you can do what you need. In <
 name="perf">performance</span>-critical inner loops, this pointer following may
 lead to poor performance.</p>
 <aside name="perf">
-
 <p>There&#8217;s a flip side to this coin. The Component pattern can often <em>improve</em>
 performance and cache coherence. Components make it easier to use the <a
 class="pattern" href="data-locality.html"> Data Locality</a> pattern to organize
 your data in the order that the CPU wants it.</p>
 </aside>
-
 <h2><a href="#sample-code" name="sample-code">Sample Code</a></h2>
 <p>One of the biggest challenges for me in writing this book is figuring out how to
 isolate each pattern. Many design patterns exist to contain code that itself
@@ -258,7 +244,6 @@ we&#8217;re going for.</p>
 a monolithic <span name="cat"><code>Bjorn</code></span> class that does everything we need
 but <em>doesn&#8217;t</em> use this pattern:</p>
 <aside name="cat">
-
 <p>I should point out that using the actual name of the character in the codebase
 is usually a bad idea. The marketing department has an annoying habit of
 demanding name changes days before you ship. &#8220;Focus tests show males between 11
@@ -268,7 +253,6 @@ instead.&#8221;</p>
 because it&#8217;s more fun to tell people you&#8217;re working on &#8220;Big Electric Cat&#8221; than
 just &#8220;the next version of Photoshop.&#8221;</p>
 </aside>
-
 <div class="codehilite"><pre><span class="k">class</span> <span class="nc">Bjorn</span>
 <span class="p">{</span>
 <span class="nl">public:</span>
@@ -606,10 +590,8 @@ code for Bj&oslash;rn&#8202;&mdash;&#8202;physics and graphics don&#8217;t even 
 Maybe I&#8217;m a bit strange, but it&#8217;s stuff like this that gets me up in the <span
 name="coffee">morning</span>.</p>
 <aside name="coffee">
-
 <p>That, and coffee. Sweet, steaming hot coffee.</p>
 </aside>
-
 <h3><a href="#no-bj&oslash;rn-at-all" name="no-bj&oslash;rn-at-all">No Bj&oslash;rn at all?</a></h3>
 <p>If you look at our <code>Bjorn</code> class now, you&#8217;ll notice there&#8217;s nothing really
 &#8220;Bj&oslash;rn&#8221; about it&#8202;&mdash;&#8202;it&#8217;s just a component bag. In fact, it looks like a pretty
@@ -666,7 +648,6 @@ class that uses those interfaces:</p>
 
 
 <aside name="id">
-
 <p>Some component systems take this even further. Instead of a <code>GameObject</code> that
 contains its components, the game entity is just an ID, a number. Then, you
 maintain separate collections of components where each one knows the ID of the
@@ -677,7 +658,6 @@ components to the extreme and let you add new components to an entity without
 the entity even knowing. The <a href="data-locality.html" class="pattern">Data
 Locality</a> chapter has more details.</p>
 </aside>
-
 <p>Our existing concrete classes will get renamed and implement those interfaces:</p>
 <div class="codehilite"><pre><span class="k">class</span> <span class="nc">BjornPhysicsComponent</span> <span class="o">:</span> <span class="k">public</span> <span class="n">PhysicsComponent</span>
 <span class="p">{</span>
@@ -712,12 +692,10 @@ having to actually create a class for him, just like this:</p>
 
 
 <aside name="factory">
-
 <p>This <code>createBjorn()</code> function is, of course, an example of the classic Gang of
 Four <a class="gof-pattern" href="http://c2.com/cgi/wiki?FactoryMethod">Factory
 Method</a> pattern.</p>
 </aside>
-
 <p>By defining other functions that instantiate <code>GameObjects</code> with different
 components, we can create all of the different kinds of objects our game needs.</p>
 <h2><a href="#design-decisions" name="design-decisions">Design Decisions</a></h2>

@@ -42,11 +42,9 @@ steps that can be performed one after another. Often, though, our users need to
 see things occur in a single instantaneous step or see multiple tasks performed
 simultaneously.</p>
 <aside name="sequential">
-
 <p>With threading and multi-core architectures this is becoming less true, but
 even with several cores, only a few operations are running concurrently.</p>
 </aside>
-
 <p>A typical example, and one that every game engine must address, is rendering.
 When the game draws the world the users see, it does so one piece at a time&#8202;&mdash;&#8202;the
 mountains in the distance, the rolling hills, the trees, each in its turn. If
@@ -63,14 +61,12 @@ back up to the top left and starts all over again. It does this so fast &#8212;
 around sixty times a second&#8202;&mdash;&#8202;that our eyes can&#8217;t see the scanning. To us, it&#8217;s
 a single static field of colored pixels&#8202;&mdash;&#8202;an image.</p>
 <aside name="scan">
-
 <p>This explanation is, err, &#8220;simplified&#8221;. If you&#8217;re a low-level hardware person
 and you&#8217;re cringing right now, feel free to skip to the next section. You
 already know enough to understand the rest of the chapter. If you <em>aren&#8217;t</em> that
 person, my goal here is to give you just enough context to understand the
 pattern we&#8217;ll discuss later.</p>
 </aside>
-
 <p>You can think of this process like a tiny hose that pipes pixels to the display.
 Individual colors go into the back of the hose, and it sprays them out across
 the display, one bit of color to each pixel in its turn. So how does the hose
@@ -81,13 +77,11 @@ framebuffer is an array of pixels in memory, a chunk of RAM where each couple of
 hose sprays across the display, it reads in the color values from this array,
 one byte at a time.</p>
 <aside name="color">
-
 <p>The specific mapping between byte values and colors is described by the <em>pixel
 format</em> and the <em>color depth</em> of the system. In most gaming consoles today, each
 pixel gets 32 bits: eight each for the red, green, and blue channels, and another
 eight left over for various other purposes.</p>
 </aside>
-
 <p>Ultimately, in order to get our game to appear on screen, all we do is write to
 that array. All of the crazy advanced graphics algorithms we have boil down to
 just that: setting byte values in the framebuffer. But there&#8217;s a little problem.</p>
@@ -106,7 +100,6 @@ outpaces us and moves into pixels we haven&#8217;t written yet. The result is
 <p><span name="tearing"></span></p>
 <p><img src="images/double-buffer-tearing.png" alt="A series of images of an in-progress frame being rendered. A pointer writes pixels while another reads them. The reader outpaces the writer until it starts reading pixels that haven't been rendered yet." /></p>
 <aside name="tearing">
-
 <p>We start drawing pixels just as the video driver starts reading from the
 framebuffer (Fig. 1). The video driver eventually catches up to the renderer and
 then races past it to pixels we haven&#8217;t written yet (Fig. 2). We finish drawing
@@ -114,7 +107,6 @@ then races past it to pixels we haven&#8217;t written yet (Fig. 2). We finish dr
 <p>The result (Fig. 4) is that the user sees half of the drawing. The name
 &#8220;tearing&#8221; comes from the fact that it looks like the bottom half was torn off.</p>
 </aside>
-
 <p>This is why we need this pattern. Our program renders the pixels one at a time,
 but we need the display driver to see them all at once&#8202;&mdash;&#8202;in one frame the face
 isn&#8217;t there, and in the next one it is. Double buffering solves this. I&#8217;ll explain how
@@ -140,14 +132,12 @@ scene. Every scene transition, we just toggle the lights between the two stages.
 Our audience gets a continuous performance with no delay between scenes. They
 never see a stagehand.</p>
 <aside name="stage">
-
 <p>Using a half-silvered mirror and some very smart layout, you could actually
 build this so that the two stages would appear to the audience in the same <em>place</em>. As
 soon as the lights switch, they would be looking at a different stage, but they would
 never have to change where they look. Building this is left as an exercise for
 the reader.</p>
 </aside>
-
 <h3><a href="#back-to-the-graphics" name="back-to-the-graphics">Back to the graphics</a></h3>
 <p>That is <span name="sync">exactly</span> how double buffering works, and this
 process underlies the rendering system of just about every game you&#8217;ve ever
@@ -155,12 +145,10 @@ seen. Instead of a single framebuffer, we have <em>two</em>. One of them represe
 current frame, stage A in our analogy. It&#8217;s the one the video hardware is
 reading from. The GPU can scan through it as much as it wants whenever it wants.</p>
 <aside name="sync">
-
 <p>Not <em>all</em> games and consoles do this, though. Older and simpler consoles where
 memory is limited carefully sync their drawing to the video refresh
 instead. It&#8217;s tricky.</p>
 </aside>
-
 <p>Meanwhile, our rendering code is writing to the <em>other</em> framebuffer. This is our
 darkened stage B. When our rendering code is done drawing the scene, it switches
 the lights by <em>swapping</em> the buffers. This tells the video hardware to start
@@ -288,11 +276,9 @@ by making a bunch of <code>draw()</code> calls on its buffer:</p>
 
 
 <aside name="draw">
-
 <p>Specifically, it draws this artistic masterpiece:</p>
 <p><img src="images/double-buffer-face.png" width="240" alt="A pixellated smiley face." /></p>
 </aside>
-
 <p>Every frame, the game tells the scene to draw. The scene clears the buffer and
 then draws a bunch of pixels, one at a time. It also provides access to the
 internal buffer through <code>getBuffer()</code> so that the video driver can get to it.</p>
@@ -397,11 +383,9 @@ name="update"><code>update()</code></span> on the actor so that it has a chance 
 processing. Critically, from the user&#8217;s perspective, <em>all actors should appear
 to update simultaneously</em>.</p>
 <aside name="update">
-
 <p>This is an example of the <a class="pattern" href="update-method.html">Update
 Method</a> pattern.</p>
 </aside>
-
 <p>Actors can also interact with each other, if by &#8220;interacting&#8221;, we mean &#8220;they can
 slap each other around&#8221;. When updating, the actor can call <code>slap()</code> on another
 actor to slap it and call <code>wasSlapped()</code> to determine if it has been slapped.</p>
@@ -527,12 +511,10 @@ state we also <em>read</em> during the update. Because of this, changes to
 that state early in the update affect <span name="cascade">later</span> parts of that <em>same</em>
 update step.</p>
 <aside name="cascade">
-
 <p>If you continue to update the stage, you&#8217;ll see the slaps gradually
 cascade through the actors, one per frame. In the first frame, Harry
 slaps Baldy. In the next frame, Baldy slaps Chump, and so on.</p>
 </aside>
-
 <p>The ultimate result is that an actor may respond to being slapped in
 either the <em>same</em> frame as the slap or in the <em>next</em> frame based
 entirely on how the two actors happen to be ordered on the stage. This

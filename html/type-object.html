@@ -57,13 +57,11 @@ to the design, a dragon <span name="isa">is a</span> kind of monster, a troll is
 another kind, and so on with the other breeds. Thinking object-oriented, that
 leads us to a <code>Monster</code> base class:</p>
 <aside name="isa">
-
 <p>This is the so-called &#8220;is-a&#8221; relationship. In conventional OOP thinking, since a
 dragon &#8220;is-a&#8221; monster, we model that by making <code>Dragon</code> a subclass of <code>Monster</code>. As
 we&#8217;ll see, subclassing is only one way of enshrining a conceptual relation like
 that into code.</p>
 </aside>
-
 <div class="codehilite"><pre><span class="k">class</span> <span class="nc">Monster</span>
 <span class="p">{</span>
 <span class="nl">public:</span>
@@ -115,10 +113,8 @@ appropriate for that breed.</p>
 
 
 <aside name="exclaim">
-
 <p>Exclamation points make everything more exciting!</p>
 </aside>
-
 <p>Each class derived from <code>Monster</code> passes in the starting health and overrides
 <code>getAttack()</code> to return the attack string for that breed. Everything works as
 expected, and before long, we&#8217;ve got our hero running around slaying a variety of
@@ -171,11 +167,9 @@ hierarchy like this:</p>
 <p><span name="inherits-arrow"></span></p>
 <p><img src="images/type-object-subclasses.png" alt="A Monster base class with derived classes for Dragon, Troll, etc." /></p>
 <aside name="inherits-arrow">
-
 <p>Here, the <img src="images/arrow-inherits.png" class="arrow" alt="A UML arrow representing inheritance." /> means &#8220;inherits
 from&#8221;.</p>
 </aside>
-
 <p>Each instance of a monster in the game will be of one of the derived monster
 types. The more breeds we have, the bigger the class hierarchy. That&#8217;s the
 problem of course: adding new breeds means adding new code, and each breed has
@@ -186,11 +180,9 @@ breed, we have a single <code>Monster</code> class and a single <code>Breed</cod
 <p><span name="references-arrow"></span></p>
 <p><img src="images/type-object-breed.png" alt="A Monster object has a reference to a Breed object." /></p>
 <aside name="references-arrow">
-
 <p>Here, the <img src="images/arrow-references.png" class="arrow" alt="A UML arrow for an object reference." /> means &#8220;is
 referenced by&#8221;.</p>
 </aside>
-
 <p>That&#8217;s it. Two classes. Notice that there&#8217;s no inheritance at all. With this
 system, each monster in the game is simply an instance of class <code>Monster</code>. The
 <code>Breed</code> class contains the information that&#8217;s shared between all monsters of the
@@ -252,7 +244,6 @@ correctly initialized with a reference to a valid breed.</p>
 <p>We&#8217;ve freed ourselves from some of the limitations of the compiler, but the cost
 is that we have to re-implement some of what it used to be doing for us.</p>
 <aside name="vtable">
-
 <p>Under the hood, C++ virtual methods are implemented using something called a
 &#8220;virtual function table&#8221;, or just &#8220;vtable&#8221;. A vtable is a simple <code>struct</code>
 containing a set of function pointers, one for each virtual method in a class.
@@ -265,7 +256,6 @@ the table.</p>
 the reference the monster holds to its breed. C++ classes are the Type Object
 pattern applied to C, handled automatically by the compiler.</p>
 </aside>
-
 <h3><a href="#it's-harder-to-define-*behavior*-for-each-type" name="it's-harder-to-define-*behavior*-for-each-type">It&#8217;s harder to define <em>behavior</em> for each type</a></h3>
 <p>With subclassing, you can override a method and do whatever you want to &#8212;
 calculate values procedurally, call other code, etc. The sky is the limit. We
@@ -288,11 +278,9 @@ name="fn">functions</span> to implement each of those behaviors. Then, we can
 associate an AI algorithm with a breed by having it store a pointer to
 the appropriate function.</p>
 <aside name="fn">
-
 <p>Sound familiar again? Now we&#8217;re back to really implementing vtables in <em>our</em>
 type objects.</p>
 </aside>
-
 <p>Another more powerful solution is to actually support defining behavior
 completely in <span name="data">data</span>. The <a class="gof-pattern"
 href="http://c2.com/cgi-bin/wiki?InterpreterPattern">Interpreter</a> and <a
@@ -301,7 +289,6 @@ objects that represent behavior. If we read in a data file and use that to
 create a data structure for one of these patterns, we&#8217;ve moved the behavior&#8217;s
 definition completely out of code and into content.</p>
 <aside name="data">
-
 <p>Over time, games are getting more data-driven. Hardware gets more powerful, and
 we find ourselves limited more by how much content we can author than how hard
 we can push the hardware. With a 64K cartridge, the challenge was <em>cramming</em> the
@@ -312,7 +299,6 @@ give us a much needed productivity boost, at the expense of less optimal runtime
 performance. Since hardware keeps getting better but our brainpower doesn&#8217;t,
 that trade-off starts to make more and more sense.</p>
 </aside>
-
 <h2><a href="#sample-code" name="sample-code">Sample Code</a></h2>
 <p>For our first pass at an implementation, let&#8217;s start simple and build the basic
 system described in the motivation section. We&#8217;ll start with the <code>Breed</code>
@@ -381,7 +367,6 @@ the class itself, and it&#8217;s responsible for giving us a new instance.</p>
 
 
 <aside name="pattern">
-
 <p>&#8220;Pattern&#8221; is the right word here. What we&#8217;re talking about is one of the classic
 patterns from Design Patterns: <a class="gof-pattern"
 href="http://c2.com/cgi/wiki?FactoryMethodPattern">Factory Method</a>.</p>
@@ -389,7 +374,6 @@ href="http://c2.com/cgi/wiki?FactoryMethodPattern">Factory Method</a>.</p>
 Ruby, Smalltalk, Objective-C, and other languages where classes are objects, you
 construct new instances by calling a method on the class object itself.</p>
 </aside>
-
 <p>And the class that uses them:</p>
 <div class="codehilite"><pre><span class="k">class</span> <span class="nc">Monster</span>
 <span class="p">{</span>
@@ -414,7 +398,6 @@ construct new instances by calling a method on the class object itself.</p>
 <code>Breed</code>. That&#8217;s our &#8220;constructor&#8221; factory method. With our original
 implementation, creating a monster looked like:</p>
 <aside name="friend">
-
 <p>There&#8217;s another minor difference here. Because the sample code is in C++, we can
 use a handy little feature: <em>friend classes.</em></p>
 <p>We&#8217;ve made <code>Monster</code>&rsquo;s constructor private, which prevents anyone from
@@ -422,7 +405,6 @@ calling it directly. Friend classes sidestep that restriction so <code>Breed</co
 still access it. This means the <em>only</em> way to create monsters is by going
 through <code>newMonster()</code>.</p>
 </aside>
-
 <div class="codehilite"><pre><span class="n">Monster</span><span class="o">*</span> <span class="n">monster</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Monster</span><span class="p">(</span><span class="n">someBreed</span><span class="p">);</span>
 </pre></div>
 
@@ -604,12 +586,10 @@ the fact that they have breeds is an implementation detail.</p>
 
 
 <aside name="null">
-
 <p>As in other examples in this book, we&#8217;re following a convention where we return
 objects by reference instead of pointer to indicate to users that <code>NULL</code> will
 never be returned.</p>
 </aside>
-
 <p>Doing this changes the design of <code>Monster</code>. The fact that all monsters have
 breeds is now a publicly visible part of its API. There are benefits with either
 choice.</p>

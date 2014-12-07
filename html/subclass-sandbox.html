@@ -46,7 +46,6 @@ name="lots">derived</span> class that implements each superpower. We&#8217;ll di
 the design doc among our team of programmers and get coding. When we&#8217;re done,
 we&#8217;ll have a hundred superpower classes.</p>
 <aside name="lots">
-
 <p>When you find yourself with a <em>lot</em> of subclasses, like in this example, that
 often means a data-driven approach is better. Instead of lots of <em>code</em> for
 defining different powers, try finding a way to define that behavior in <em>data</em>
@@ -56,7 +55,6 @@ class="pattern" href="bytecode.html">Bytecode</a>, and <a class="gof-pattern"
 href="http://en.wikipedia.org/wiki/Interpreter_pattern">Interpreter</a> can all
 help.</p>
 </aside>
-
 <p>We want to immerse our players in a world teeming with variety. Whatever power
 they dreamed up when they were a kid, we want in our game. That means these
 superpower subclasses will be able to do just about everything: play sounds,
@@ -137,13 +135,11 @@ class with a lot of direct subclasses, we have a point of leverage in our
 codebase. Time and love that we put into <code>Superpower</code> can benefit a wide set of
 classes in the game.</p>
 <aside name="wide">
-
 <p>Lately, you find a lot of people criticizing inheritance in object-oriented
 languages. Inheritance <em>is</em> problematic&#8202;&mdash;&#8202;there&#8217;s really no deeper coupling in
 a codebase than the one between a base class and its subclass&#8202;&mdash;&#8202;but I find
 <em>wide</em> inheritance trees to be easier to work with than <em>deep</em> ones.</p>
 </aside>
-
 <h2><a href="#the-pattern" name="the-pattern">The Pattern</a></h2>
 <p>A <strong>base class</strong> defines an abstract <strong>sandbox method</strong> and several <strong>provided
 operations</strong>. Marking them protected makes it clear that they are for use by
@@ -247,11 +243,9 @@ the base class, it keeps that coupling encapsulated within <code>Superpower</cod
 
 
 <aside name="jump">
-
 <p>OK, maybe being able to <em>jump</em> isn&#8217;t all that <em>super</em>, but I&#8217;m trying to keep
 things basic here.</p>
 </aside>
-
 <p>This power springs the superhero into the air, playing an appropriate sound and
 kicking up a little cloud of dust. If all of the superpowers were this simple &#8212;
 just a combination of sound, particle effect, and motion&#8202;&mdash;&#8202;then we wouldn&#8217;t
@@ -320,12 +314,10 @@ statements, but you can do <span name="data">anything</span> you want. By having
 the sandbox method be an actual full-fledged method that contains arbitrary
 code, the sky&#8217;s the limit.</p>
 <aside name="data">
-
 <p>Earlier, I suggested a data-driven approach for powers. This is one reason why
 you may decide <em>not</em> to do that. If your behavior is complex and imperative,
 it is more difficult to define in data.</p>
 </aside>
-
 <h2><a href="#design-decisions" name="design-decisions">Design Decisions</a></h2>
 <p>As you can see, Subclass Sandbox is a fairly &#8220;soft&#8221; pattern. It describes a basic idea, but
 it doesn&#8217;t have a lot of detailed mechanics. That means you&#8217;ll be making some
@@ -341,11 +333,9 @@ name="include"><em>every</em></span> operation that a subclass may need. Subclas
 <em>only</em> coupled to the base class and don&#8217;t call into any outside systems
 whatsoever.</p>
 <aside name="include">
-
 <p>Concretely, this means each source file for a subclass would only need a single
 <code>#include</code>&#8202;&mdash;&#8202;the one for its base class.</p>
 </aside>
-
 <p>Between these two points, there&#8217;s a wide middle ground where some operations are
 provided by the base class and others are accessed directly from the outside
 system that defines it. The more operations you provide, the less coupled

@@ -40,7 +40,6 @@ show you other, more interesting places where the term &#8220;prototype&#8221; a
 concepts behind it have popped up. But first, let&#8217;s revisit the <span
 name="original">original</span> pattern.</p>
 <aside name="original">
-
 <p>I don&#8217;t say &#8220;original&#8221; lightly here. <em>Design Patterns</em> cites Ivan Sutherland&#8217;s
 legendary <a href="http://en.wikipedia.org/wiki/Sketchpad">Sketchpad</a> project in <em>1963</em>
 as one of the first examples of this pattern in the wild. While everyone else
@@ -50,7 +49,6 @@ programming.</p>
 <p>Watch <a href="http://www.youtube.com/watch?v=USyoT_Ha_bA">the demo</a> and prepare to be
 blown away.</p>
 </aside>
-
 <h2><a href="#the-prototype-design-pattern" name="the-prototype-design-pattern">The Prototype Design Pattern</a></h2>
 <p>Pretend we&#8217;re making a game in the style of Gauntlet. We&#8217;ve got creatures and
 fiends swarming around the hero, vying for their share of his flesh. These
@@ -75,11 +73,9 @@ each monster class, leading to a parallel class hierarchy:</p>
 <p><span name="inherits-arrow"></span></p>
 <p><img src="images/prototype-hierarchies.png" alt="Parallel class hierarchies. Ghost, Demon, and Sorceror all inherit from Monster. GhostSpawner, DemonSpawner, and SorcerorSpawner inherit from Spawner." /></p>
 <aside name="inherits-arrow">
-
 <p>I had to dig up a dusty UML book to make this diagram. The <img
 src="images/arrow-inherits.png" class="arrow" alt="A UML arrow." /> means &#8220;inherits from&#8221;.</p>
 </aside>
-
 <p>Implementing it would look like this:</p>
 <div class="codehilite"><pre><span class="k">class</span> <span class="nc">Spawner</span>
 <span class="p">{</span>
@@ -250,12 +246,10 @@ templates. Our spawner class needs to construct instances of some type, but we
 don&#8217;t want to hard code some specific monster class. The natural solution then
 is to make it a <em>type parameter</em>, which templates let us do:</p>
 <aside name="templates">
-
 <p>I&#8217;m not sure if C++ programmers learned to love them or if templates just
 scared some people completely away from C++. Either way, everyone I see using
 C++ today uses templates too.</p>
 </aside>
-
 <p><span name="base"></span></p>
 <div class="codehilite"><pre><span class="k">class</span> <span class="nc">Spawner</span>
 <span class="p">{</span>
@@ -279,14 +273,12 @@ C++ today uses templates too.</p>
 
 
 <aside name="base">
-
 <p>The <code>Spawner</code> class here is so that code that doesn&#8217;t care what kind of monster
 a spawner creates can just use it and work with pointers to <code>Monster</code>.</p>
 <p>If we only had the <code>SpawnerFor&lt;T&gt;</code> class, there would be no single supertype the
 instantiations of that template all shared, so any code that worked with
 spawners of any monster type would itself need to take a template parameter.</p>
 </aside>
-
 <h3><a href="#first-class-types" name="first-class-types">First-class types</a></h3>
 <p>The previous two solutions address the need to have a class, <code>Spawner</code>, which is
 parameterized by a type. In C++, types aren&#8217;t generally first-class, so that
@@ -294,14 +286,12 @@ requires some <span name="type-obj">gymnastics</span>. If you&#8217;re using a
 dynamically-typed language like JavaScript, Python, or Ruby where classes <em>are</em>
  regular objects you can pass around, you can solve this much more directly.</p>
 <aside name="type-obj">
-
 <p>In some ways, the <a href="type-object.html" class="pattern">Type Object</a>
 pattern is another workaround for the lack of first-class types. That pattern
 can still be useful even in languages with them, though, because it lets <em>you</em>
 define what a &#8220;type&#8221; is. You may want different semantics than what the
 language&#8217;s built-in classes provide.</p>
 </aside>
-
 <p>When you make a spawner, just pass in the class of monster that it should
 construct&#8202;&mdash;&#8202;the actual runtime object that represents the monster&#8217;s
 class. Easy as pie.</p>
@@ -332,21 +322,17 @@ in the <em>class</em>. There&#8217;s always that level of indirection to get to 
 which means fields and methods are different.</p>
 <p><img src="images/prototype-class.png" alt="A Class contains a list of Methods. An Instance contains a list of Fields and a reference to its Class." /></p>
 <aside name="vtable">
-
 <p>For example, to invoke a virtual method in C++, you look in the instance for the
 pointer to its vtable, then look up the method there.</p>
 </aside>
-
 <p>Self eliminates that distinction. To look up <em>anything</em>, you just look on the
 object. An instance can contain both state and behavior. You can have a single
 object that has a method completely unique to it.</p>
 <p><span name="island"></span></p>
 <p><img src="images/prototype-object.png" alt="An Object contains a mixed list of Fields and Methods." /></p>
 <aside name="island">
-
 <p>No man is an island, but this object is.</p>
 </aside>
-
 <p>If that was all Self did, it would be hard to use. Inheritance in class-based
 languages, despite its faults, gives you a useful mechanism for reusing
 polymorphic code and avoiding duplication. To accomplish something similar
@@ -358,12 +344,10 @@ When we fail to find a property on the first object, we try its parent, and its
 parent, and so on. In other words, failed lookups are <em>delegated</em> to an object&#8217;s
 parent.</p>
 <aside name="parent">
-
 <p>I&#8217;m simplifying here. Self actually supports multiple parents. Parents are just
 specially marked fields, which means you can do things like inherit parents or
 change them at runtime, leading to what&#8217;s called <em>dynamic inheritance</em>.</p>
 </aside>
-
 <p><img src="images/prototype-delegate.png" alt="An Object contains Fields and Methods and a reference to another object that it delegates to." /></p>
 <p>Parent objects let us reuse behavior (and state!) across multiple objects, so
 we&#8217;ve covered part of the utility of classes. The other key thing classes do is
@@ -389,18 +373,15 @@ having to implement <code>clone()</code> ourselves; it&#8217;s built into the sy
 <p>This is such a beautiful, clever, minimal system that as soon as I learned about
 it, <span name="finch">I started</span> creating a prototype-based language to get more experience with it.</p>
 <aside name="finch">
-
 <p>I realize building a language from scratch is not the most efficient way to
 learn, but what can I say? I&#8217;m a bit peculiar. If you&#8217;re curious, the language
 is called <a href="http://finch.stuffwithstuff.com/">Finch</a>.</p>
 </aside>
-
 <h3><a href="#how-did-it-go" name="how-did-it-go">How did it go?</a></h3>
 <p>I was super excited to play with a pure prototype-based language, but once I had
 mine up and running, I <span name="no-fun">discovered</span> an unpleasant fact:
 it just wasn&#8217;t that fun to program in.</p>
 <aside name="no-fun">
-
 <p>I&#8217;ve since heard through the grapevine that many of the Self programmers came to
 the same conclusion. The project was far from a loss, though. Self was so
 dynamic that it needed all sorts of virtual machine innovations in order to run
@@ -410,7 +391,6 @@ optimizing method dispatch are the exact same techniques&#8202;&mdash;&#8202;oft
 the same people!&#8202;&mdash;&#8202;that now make many of the world&#8217;s dynamically-typed
 languages fast enough to use for massively popular applications.</p>
 </aside>
-
 <p>Sure, the language was simple to implement, but that was because it punted the
 complexity onto the user. As soon as I started trying to use it, I found myself
 missing the structure that classes give. I ended up trying to recapitulate it at
@@ -428,11 +408,9 @@ knew about, I&#8217;m glad that most of us aren&#8217;t actually programming usi
 every day. <span name="telling">The code</span> I&#8217;ve seen that fully embraces
 prototypes has a weird mushiness to it that I find hard to wrap my head around.</p>
 <aside name="telling">
-
 <p>It&#8217;s also telling how <em>little</em> code there actually is written in a prototypal
 style. I&#8217;ve looked.</p>
 </aside>
-
 <h3><a href="#what-about-javascript" name="what-about-javascript">What about JavaScript?</a></h3>
 <p>OK, if prototype-based languages are so unfriendly, how do I explain JavaScript?
 Here&#8217;s a language with prototypes used by millions of people every day. More
@@ -444,12 +422,10 @@ fields and &#8220;methods&#8221; (which are really just functions stored as fiel
 object can also have another object, called its &#8220;prototype&#8221;, that it delegates
 to if a field access fails.</p>
 <aside name="ten">
-
 <p>As a language designer, one appealing thing about prototypes is that they are
 simpler to implement than classes. Eich took full advantage of this: the first
 version of JavaScript was created in ten days.</p>
 </aside>
-
 <p>But, despite that, I believe that JavaScript in practice has more in common with
 class-based languages than with prototypal ones. One hint that JavaScript has
 taken steps away from Self is that the core operation in a prototype-based
@@ -543,22 +519,18 @@ using prototypes and delegation for reusing data.</p>
 Gauntlet rip-off</span> I mentioned earlier. The game designers need to specify
 the attributes for monsters and items in some kind of files.</p>
 <aside name="shameless">
-
 <p>I mean completely original title in no way inspired by any previously existing
 top-down multi-player dungeon crawl arcade games. Please don&#8217;t sue me.</p>
 </aside>
-
 <p>One common approach is to use JSON. Data entities are basically <em>maps</em>, or
 <em>property bags</em>, or any of a dozen other terms because there&#8217;s nothing
 programmers like more than <span name="inventing">inventing</span> a new name
 for something that already has one.</p>
 <aside name="inventing">
-
 <p>We&#8217;ve re-invented them so many times that Steve Yegge calls them <a href="http://steve-yegge.blogspot.com/2008/10/universal-design-patter
 n.html">&#8220;The Universal
 Design Pattern&#8221;</a>.</p>
 </aside>
-
 <p>So a goblin in the game might be defined something like this:</p>
 <div class="codehilite"><pre><span class="p">{</span>
   <span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;goblin grunt&quot;</span><span class="p">,</span>
@@ -607,13 +579,11 @@ field, then that defines the name of another object that this one delegates to.
 Any properties that don&#8217;t exist on the first object fall back to being looked up
 on the prototype.</p>
 <aside name="meta">
-
 <p>This makes the <code>"prototype"</code> a piece of <em>meta</em>data instead of data. Goblins have
 warty green skin and yellow teeth. They don&#8217;t have prototypes. Prototypes are a
 property of the <em>data object representing the goblin</em>, and not the goblin
 itself.</p>
 </aside>
-
 <p>With that, we can simplify the JSON for our goblin horde:</p>
 <div class="codehilite"><pre><span class="p">{</span>
   <span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;goblin grunt&quot;</span><span class="p">,</span>

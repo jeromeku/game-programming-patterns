@@ -44,14 +44,12 @@ name="transform"><em>transform</em></span>. The transform describes the object&#
 position, rotation, and scale in the world. To move or turn an object, we simply
 change its transform.</p>
 <aside name="transform">
-
 <p>The mechanics of <em>how</em> this transform is stored and manipulated are unfortunately
 out of scope here. The comically abbreviated summary is that it&#8217;s a 4x4 matrix.
 You can make a single transform that combines two transforms&#8202;&mdash;&#8202;for example,
 translating and then rotating an object&#8202;&mdash;&#8202;by multiplying the two matrices.</p>
 <p>How and why that works is left as an exercise for the reader.</p>
 </aside>
-
 <p>When the renderer draws an object, it takes the object&#8217;s model, applies the
 transform to it, and then renders it there in the world. If we had a scene
 <em>bag</em> and not a scene <em>graph</em>, that would be it, and life would be simple.</p>
@@ -66,21 +64,17 @@ the sea. The crow&#8217;s nest&#8217;s transform positions the nest on the ship,
 <p><span name="pirate"></span>
 <img src="images/dirty-flag-pirate.png" alt="A pirate ship containing a crow's nest with a pirate in it with a parrot on his shoulder." /></p>
 <aside name="pirate">
-
 <p>Programmer art!</p>
 </aside>
-
 <p>This way, when a parent object moves, its children move with it automatically.
 If we change the local transform of the ship, the crow&#8217;s nest, pirate, and
 parrot go along for the ride. It would be a total <span
 name="slide">headache</span> if, when the ship moved, we had to manually adjust
 the transforms of all the objects on it to keep them from sliding off.</p>
 <aside name="slide">
-
 <p>To be honest, when you are at sea you <em>do</em> have to keep manually adjusting your
 position to keep from sliding off. Maybe I should have chosen a drier example.</p>
 </aside>
-
 <p>But to actually draw the parrot on screen, we need to know its absolute position
 in the world. I&#8217;ll call the parent-relative transform the object&#8217;s <em>local
 transform</em>. To render an object, we need to know its <em>world transform</em>.</p>
@@ -91,11 +85,9 @@ transforms as you go. In other words, the parrot&#8217;s world transform is:</p>
 <p><span name="degenerate"></span>
 <img src="images/dirty-flag-multiply.png" alt="The parrot's world position comes from multiplying the local positions for the ship, nest, pirate, and parrot." /></p>
 <aside name="degenerate">
-
 <p>In the degenerate case where the object has no parent, its local and world
 transforms are equivalent.</p>
 </aside>
-
 <p>We need the world transform for every object in the world every frame, so even
 though there are only a handful of matrix multiplications per model, it&#8217;s on the hot
 code path where performance is critical. Keeping them up to date is tricky
@@ -126,11 +118,9 @@ happening?</p>
 <p><span name="stars"></span>
 <img src="images/dirty-flag-update-bad.png" alt="Any time an object moves, the world coordinates are recalculated eagerly and redundantly." /></p>
 <aside name="stars">
-
 <p>You can see on the lines marked &#x2605; that we&#8217;re recalculating the parrot&#8217;s
 world transform <em>four</em> times when we only need the result of the final one.</p>
 </aside>
-
 <p>We only moved four objects, but we did <em>ten</em> world transform calculations.
 That&#8217;s six pointless calculations that get thrown out before they are ever used
 by the renderer. We calculated the parrot&#8217;s world transform <em>four</em> times, but it
@@ -146,11 +136,9 @@ local transforms in a single batch and <em>then</em> recalculate the affected wo
 transform just once after all of those modifications are done, right before we
 need it to render.</p>
 <aside name="decoupling">
-
 <p>It&#8217;s interesting how much of software architecture is intentionally
 engineering a little slippage.</p>
 </aside>
-
 <p>To do this, we add a <em>flag</em> to each object in the graph. &#8220;Flag&#8221; and &#8220;bit&#8221; are
 synonymous in programming&#8202;&mdash;&#8202;they both mean a single micron of data that can be
 in one of two states. We call those &#8220;true&#8221; and &#8220;false&#8221;, or sometimes &#8220;set&#8221; and
@@ -164,11 +152,9 @@ Hence: <em>a dirty flag</em>. &#8220;Dirty bit&#8221; is an equally
 <span name="specific">common</span> name for this pattern, but I figured I&#8217;d
 stick with the name that didn&#8217;t seem as prurient.</p>
 <aside name="specific">
-
 <p>Wikipedia&#8217;s editors don&#8217;t have my level of self-control and went with <a href="http://en.wikipedia.org/wiki/Dirty_bit">dirty
 bit</a>.</p>
 </aside>
-
 <p>If we apply this pattern and then move all of the objects in our previous
 example, the game ends up doing:</p>
 <p><img src="images/dirty-flag-update-good.png" alt="By deferring until all moves are done, we only recalculate once." /></p>
@@ -235,11 +221,9 @@ find a place here or there where they help. <span name="hacks">Searching</span>
 your average game codebase for the word &#8220;dirty&#8221; will often turn up uses of this
 pattern.</p>
 <aside name="hacks">
-
 <p>From my research, it also turns up a lot of comments apologizing for &#8220;dirty&#8221;
 hacks.</p>
 </aside>
-
 <h2><a href="#keep-in-mind" name="keep-in-mind">Keep in Mind</a></h2>
 <p>Even after you&#8217;ve convinced yourself this pattern is a good fit, there are a few
 wrinkles that can cause you some discomfort.</p>
@@ -269,7 +253,6 @@ for this shortcoming. The auto-save frequency is a point on the continuum
 between not losing too much work when a crash occurs and not thrashing the file
 system too much by saving all the time.</p>
 <aside name="gc">
-
 <p>This mirrors the different garbage collection strategies in systems that
 automatically manage memory. Reference counting frees memory the second it&#8217;s no
 longer needed, but it burns CPU time updating ref counts eagerly every time
@@ -281,7 +264,6 @@ collector is done scouring the heap.</p>
 incremental GC that reclaim memory less eagerly than pure ref-counting but more
 eagerly than stop-the-world collectors.</p>
 </aside>
-
 <h3><a href="#you-have-to-make-sure-to-set-the-flag-*every*-time-the-state-changes" name="you-have-to-make-sure-to-set-the-flag-*every*-time-the-state-changes">You have to make sure to set the flag <em>every</em> time the state changes</a></h3>
 <p>Since the derived data is calculated from the primary data, it&#8217;s essentially a
 cache. Whenever you have cached data, the trickiest aspect of it is <span
@@ -289,11 +271,9 @@ name="cache"><em>cache invalidation</em></span>&#8202;&mdash;&#8202;correctly no
 out of sync with its source data. In this pattern, that means setting the dirty
 flag when <em>any</em> primary data changes.</p>
 <aside name="cache">
-
 <p>Phil Karlton famously said, &#8220;There are only two hard things in Computer Science:
 cache invalidation and naming things.&#8221;</p>
 </aside>
-
 <p>Miss it in one place, and your program will incorrectly use stale derived data.
 This leads to confused players and bugs that are very hard to track down. When you use
 this pattern, you&#8217;ll have to take care that any code that modifies the primary
@@ -308,12 +288,10 @@ won&#8217;t be missed.</p>
 previously calculated data. This is obvious, but that does imply that you have
 to keep that derived data around in memory in case you end up needing it later.</p>
 <aside name="sync">
-
 <p>This isn&#8217;t much of an issue when you&#8217;re using this pattern to synchronize the
 primary state to some other place. In that case, the derived data isn&#8217;t usually
 in memory at all.</p>
 </aside>
-
 <p>If you weren&#8217;t using this pattern, you could calculate the derived data on the
 fly whenever you needed it, then discard it when you were done. That avoids the
 expense of keeping it cached in memory at the cost of having to do that
@@ -325,11 +303,9 @@ trade-off makes sense when the calculation is slow and memory is cheap. When
 you&#8217;ve got more time than memory on your hands, it&#8217;s better to calculate it
 as needed.</p>
 <aside name="trade">
-
 <p>Conversely, compression algorithms make the opposite trade-off: they optimize
 <em>space</em> at the expense of the processing time needed to decompress.</p>
 </aside>
-
 <h2><a href="#sample-code" name="sample-code">Sample Code</a></h2>
 <p>Let&#8217;s assume we&#8217;ve met the surprisingly long list of requirements and see how
 the pattern looks in code. As I mentioned before, the actual math behind
@@ -490,7 +466,6 @@ go to render. Let&#8217;s see:</p>
 
 
 <aside name="branch">
-
 <p>There&#8217;s a subtle assumption here that the <code>if</code> check is faster than a matrix
 multiply. Intuitively, you would think it is; surely testing a single bit is
 faster than a bunch of floating point arithmetic.</p>
@@ -502,7 +477,6 @@ refilling the pipeline.</p>
 more about how modern CPUs try to go faster and how you can avoid tripping them
 up like this.</p>
 </aside>
-
 <p>This is similar to the original na&iuml;ve implementation. The key changes are that
 we check to see if the node is dirty before calculating the world transform and
 we store the result in a field instead of a local variable. When the node is
@@ -520,12 +494,10 @@ the world transform.</p>
 is just a couple of assignments, and rendering the world calculates the exact
 minimum number of world transforms that have changed since the last frame.</p>
 <aside name="clever">
-
 <p>Note that this clever trick only works because <code>render()</code> is the <em>only</em> thing in
 <code>GraphNode</code> that needs an up-to-date world transform. If other things accessed
 it, we&#8217;d have to do something different.</p>
 </aside>
-
 <h2><a href="#design-decisions" name="design-decisions">Design Decisions</a></h2>
 <p>This pattern is fairly specific, so there are only a couple of knobs to twiddle:</p>
 <h3><a href="#when-is-the-dirty-flag-cleaned" name="when-is-the-dirty-flag-cleaned">When is the dirty flag cleaned?</a></h3>

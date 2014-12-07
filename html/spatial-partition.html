@@ -76,14 +76,12 @@ pairwise tests we have to perform each frame increases with the <em>square</em> 
 number of units. Each additional unit we add has to be compared to <em>all</em> of the
 previous ones. With a large number of units, that can spiral out of control.</p>
 <aside name="all">
-
 <p>The inner loop doesn&#8217;t actually walk all of the units. It only walks the ones
 the outer loop hasn&#8217;t already visited. This avoids comparing each pair of units
 <em>twice</em>, once in each order. If we&#8217;ve already handled a collision between A and
 B, we don&#8217;t need to check it again for B and A.</p>
 <p>In Big-O terms, though, this is still <em>O(n&sup2;)</em>.</p>
 </aside>
-
 <h3><a href="#drawing-battle-lines" name="drawing-battle-lines">Drawing battle lines</a></h3>
 <p>The problem we&#8217;re running into is that there&#8217;s no underlying order to the array
 of units. To find a unit near some location, we have to walk the entire array.
@@ -96,13 +94,11 @@ units by their positions on the battleline. Once we do that, we can use somethin
 search</a> to find nearby units without
 having to scan the entire array.</p>
 <aside name="array">
-
 <p>A binary search has <em>O(log n)</em> complexity, which means find all battling units
 goes from <em>O(n&sup2;)</em> to <em>O(n log n)</em>. Something like a <a href="http://en.wikipedia.org/wiki/Pigeonhole_sort">pigeonhole
 sort</a> could get that down to
 <em>O(n)</em>.</p>
 </aside>
-
 <p>The lesson is pretty obvious: if we store our objects in a data structure
 organized by their locations, we can find them much more quickly. This pattern
 is about applying that idea to spaces that have more than one dimension.</p>
@@ -130,11 +126,9 @@ name="hash-change">reorganize</span> the data structure to keep track of an
 object at a new location, and that adds code complexity <em>and</em> spends CPU cycles.
 Make sure the trade-off is worth it.</p>
 <aside name="hash-change">
-
 <p>Imagine a hash table where the keys of the hashed objects can change
 spontaneously, and you&#8217;ll have a good feel for why it&#8217;s tricky.</p>
 </aside>
-
 <p>A spatial partition also uses additional memory for its bookkeeping data
 structures. Like many optimizations, it trades memory for speed. If you&#8217;re
 shorter on memory than you are on clock cycles, that may be a losing
@@ -147,11 +141,9 @@ well-documented. Academia likes publishing papers that prove performance gains.
 Since I only care about the concept behind the pattern, I&#8217;m going to show you
 the simplest spatial partition: a <em>fixed grid</em>.</p>
 <aside name="variations">
-
 <p>See the last section of this chapter for a list of some of the most common
 spatial partitions used in games.</p>
 </aside>
-
 <h3><a href="#a-sheet-of-graph-paper" name="a-sheet-of-graph-paper">A sheet of graph paper</a></h3>
 <p>Imagine the entire field of battle. Now, superimpose a grid of fixed-size squares
 onto it like a sheet of graph paper. Instead of storing our units in a single
@@ -231,7 +223,6 @@ list</a> instead of an array.</p>
 cell, and each unit has pointers to the units before it and after it in the
 list. We&#8217;ll see why soon.</p>
 <aside name="stl">
-
 <p>Throughout this book, I&#8217;ve avoided using any of the built-in collection types in
 the C++ standard library. I want to require as little external knowledge as
 possible to understand the example, and, like a magician&#8217;s &#8220;nothing up my
@@ -242,7 +233,6 @@ code, spare yourself the headache and use the fine collections built into pretty
 much every programming language today. Life&#8217;s too short to code linked lists
 from scratch.</p>
 </aside>
-
 <h3><a href="#entering-the-field-of-battle" name="entering-the-field-of-battle">Entering the field of battle</a></h3>
 <p>The first thing we need to do is make sure new units are actually placed into
 the grid when they are created. We&#8217;ll make <code>Unit</code> handle this in its
@@ -281,11 +271,9 @@ constructor:</p>
 
 
 <aside name="floor">
-
 <p>Dividing by the cell size converts world coordinates to cell space. Then, casting to
 an <code>int</code> truncates the fractional part so we get the cell index.</p>
 </aside>
-
 <p>It&#8217;s a little finicky like linked list code always is, but the basic idea is
 pretty simple. We find the cell that the unit is sitting in and then add it to
 the front of that list. If there is already a list of units there, we link it in
@@ -339,7 +327,6 @@ position.</p>
 the battle to each other&#8202;&mdash;&#8202;just the ones close enough to be in the same cell.
 That&#8217;s the heart of the optimization.</p>
 <aside name="nested">
-
 <p>From a simple analysis, it looks like we&#8217;ve actually made the performance
 <em>worse</em>. We&#8217;ve gone from a doubly nested loop over the units to a
 <em>triply</em> nested loop over the cells and then the units. The trick here is that
@@ -348,7 +335,6 @@ cancel out the cost of the outer loop over the cells.</p>
 <p>However, that does depend a bit on the granularity of our cells. Make them too
 small and that outer loop can start to matter.</p>
 </aside>
-
 <h3><a href="#charging-forward" name="charging-forward">Charging forward</a></h3>
 <p>We&#8217;ve solved our performance problem, but we&#8217;ve created a new problem in its
 stead. Units are now stuck in their cells. If we move a unit past the boundary
@@ -498,11 +484,9 @@ units in <span name="neighbor">four</span> of the eight neighboring cells. If
 any unit in those neighboring cells is close enough to the edge to be within the
 unit&#8217;s attack radius, it will find the hit.</p>
 <aside name="neighbor">
-
 <p>The cell with the unit is <code>U</code>, and the neighboring cells it looks at are <code>X</code>.</p>
 <p><img src="images/spatial-partition-neighbors.png" width="240" alt="The set of neighbors for a Cell with the four being considered highlighted." /></p>
 </aside>
-
 <p>We only look at <em>half</em> of the neighbors for the same reason that the inner loop
 starts <em>after</em> the current unit&#8202;&mdash;&#8202; to avoid comparing each pair of units twice.
 Consider what would happen if we did check all eight neighboring cells.</p>
@@ -538,11 +522,9 @@ name="couple">couple</span> of regions. Then, if one of these regions still
 contains many objects, it&#8217;s subdivided. This process continues recursively until
 every region has fewer than some maximum number of objects in it.</p>
 <aside name="couple">
-
 <p>They usually split it in two, four, or eight&#8202;&mdash;&#8202;nice round numbers to a
 programmer.</p>
 </aside>
-
 <ul>
 <li>
 <p><strong>If it&#8217;s a flat partition:</strong></p>

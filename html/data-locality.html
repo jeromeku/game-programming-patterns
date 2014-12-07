@@ -45,14 +45,12 @@ than ever, but we can&#8217;t <em>get</em> that data faster.</p>
 <p><span name="legend"></span></p>
 <p><img src="images/data-locality-chart.png" alt="A chart showing processor and RAM speed from 1980 to 2010. Processor speed increases quickly, but RAM speed lags behind." /></p>
 <aside name="legend">
-
 <p>Processor and RAM speed relative to their respective speeds in 1980. As you can
 see, CPUs have grown in leaps and bounds, but RAM access is lagging far behind.</p>
 <p>Data for this is from <em>Computer Architecture: A Quantitative Approach</em>
 by John L. Hennessy, David A. Patterson, Andrea C. Arpaci-Dusseau by way of Tony
 Albrecht&#8217;s &#8220;<a href="http://seven-degrees-of-freedom.blogspot.com/2009/12/pitfalls-of-object-oriented-programming.html">Pitfalls of Object-Oriented Programming</a>&rdquo;.</p>
 </aside>
-
 <p>For your super-fast CPU to blow through a ream of calculations, it actually has
 to get the data out of main memory and into registers. As you can see, RAM hasn&#8217;t
 been keeping up with increasing CPU speeds. Not even close.</p>
@@ -64,13 +62,11 @@ of the time waiting for data?</p>
 time these days, but it&#8217;s not as bad as it could be. To explain how, let&#8217;s take
 a trip to the Land of Overly Long Analogies&#8230;</p>
 <aside name="ram">
-
 <p>It&#8217;s called &#8220;random access memory&#8221; because, unlike disc drives, you can
 theoretically access any piece of it as quick as any other. You don&#8217;t have
 to worry about reading things consecutively like you do a disc.</p>
 <p>Or, at least, you <em>didn&#8217;t</em>. As we&#8217;ll see, RAM isn&#8217;t so random access anymore.</p>
 </aside>
-
 <h3><a href="#a-data-warehouse" name="a-data-warehouse">A data warehouse</a></h3>
 <p>Imagine you&#8217;re an accountant in a tiny little office. Your job is to request a
 box of papers and then do some <span name="accountant">accountant</span>-y stuff
@@ -78,11 +74,9 @@ with them&#8202;&mdash;&#8202;add up a bunch of numbers or something. You must d
 specific labeled boxes according to some arcane logic that only makes sense to
 other accountants.</p>
 <aside name="accountant">
-
 <p>I probably shouldn&#8217;t have used a job I know absolutely nothing about in this
 analogy.</p>
 </aside>
-
 <p>Thanks to a mixture of hard work, natural aptitude, and stimulants, you can
 finish an entire box in, say, a minute. There&#8217;s a little problem, though. All of
 those boxes are stored in a warehouse in a separate building. To get a box, you
@@ -109,11 +103,9 @@ watching you work for a few days, they notice a few things:</p>
 </li>
 </ul>
 <aside name="next">
-
 <p>The technical term for using something near the thing you just used is <em>locality
 of reference</em>.</p>
 </aside>
-
 <p>They come up with a clever fix. Whenever you request a box from the warehouse
 guy, he&#8217;ll grab an entire pallet of them. He gets the box you want and then some
 more boxes that are next to it. He doesn&#8217;t know if you want those (and, given
@@ -144,14 +136,12 @@ inside the chip. The CPU can pull data from this much faster than it can from
 main memory. It&#8217;s small because it has to fit in the chip and because the faster
 type of memory it uses (static RAM or &#8220;SRAM&#8221;) is way more expensive.</p>
 <aside name="caches">
-
 <p>Modern hardware has multiple levels of caching, which is what they mean
 when you hear &#8220;L1&#8221;, &#8220;L2&#8221;, &#8220;L3&#8221;, etc. Each level is larger but slower than the
 previous. For this chapter, we won&#8217;t worry about the fact that memory is
 actually a <a href="http://en.wikipedia.org/wiki/Memory_hierarchy">hierarchy</a>, but it&#8217;s
 important to know.</p>
 </aside>
-
 <p>This little chunk of memory is called a <em>cache</em> (in particular, the chunk on the
 chip is your <em>L1 cache</em>), and in my belabored analogy, its part was played by the
 pallet of boxes. Whenever your chip needs a byte of data from RAM, it
@@ -165,13 +155,11 @@ than hitting RAM. Successfully finding a piece of data in the cache is called a
 <em>cache hit</em>. If it can&#8217;t find it in there and has to go to main memory, that&#8217;s a
 <em>cache miss</em>.</p>
 <aside name="pallet">
-
 <p>I glossed over (at least) one detail in the analogy. In your office, there was
 only room for one pallet, or one cache line. A real cache contains a number of
 cache lines. The details about how those work is out of scope here, but search
 for &#8220;cache associativity&#8221; to feed your brain.</p>
 </aside>
-
 <p>When a cache miss occurs, the CPU <em>stalls</em>&#8202;&mdash;&#8202;it can&#8217;t process the next
 instruction because it needs data. It sits there, bored out of its mind for a
 few hundred cycles until the fetch completes. Our mission is to avoid that.
@@ -200,14 +188,12 @@ wrote two programs</span> that did the <em>exact same</em> computation. The only
 difference was how many cache misses they caused. The slow one was <em>fifty times</em>
 slower than the other.</p>
 <aside name="ymmv">
-
 <p>There are a lot of caveats here. In particular, different computers have different
 cache setups, so my machine may be different from yours, and dedicated game
 consoles are very different from PCs, which are quite different from mobile
 devices.</p>
 <p>Your mileage will vary.</p>
 </aside>
-
 <p>This was a real eye-opener to me. I&#8217;m used to thinking of performance being an
 aspect of <em>code</em>, not <em>data</em>. A byte isn&#8217;t slow or fast, it&#8217;s just some static
 thing sitting there. But because of caching, <em>the way you organize data
@@ -218,11 +204,9 @@ here. Optimization for cache usage is a huge topic. I haven&#8217;t even touched
 the CPU before it can be executed. Someone more versed on the subject could
 write an entire <span name="book">book</span> on it.</p>
 <aside name="book">
-
 <p>In fact, someone <em>did</em> write a book on it: <a href="http://www.dataorienteddesign.com/dodmain/"><em>Data-Oriented
 Design</em></a>, by Richard Fabian.</p>
 </aside>
-
 <p>Since you&#8217;re already reading <em>this</em> book right now, though, I have a few basic
 techniques that will get you started along the path of thinking about how data
 structures impact your performance.</p>
@@ -232,13 +216,11 @@ name="line">cache line, the faster you go</span>. So the goal then is to
 <em>organize your data structures so that the things you&#8217;re processing are next to
 each other in memory</em>.</p>
 <aside name="line">
-
 <p>There&#8217;s a key assumption here, though: one thread. If you are modifying nearby
 data on multiple threads, it&#8217;s faster to have it on <em>different</em> cache lines. If
 two threads try to tweak data on the same cache line, both cores have to do some
 costly synchronization of their caches.</p>
 </aside>
-
 <p>In other words, if your code is crunching on <code>Thing</code>, then <code>Another</code>, then
 <code>Also</code>, you want them laid out in memory like this:</p>
 <p><img src="images/data-locality-things.png" alt="Thing, Another, and Also laid out directly next to each other in order in memory." /></p>
@@ -271,7 +253,6 @@ report this. It&#8217;s worth spending the time to get one of these working and 
 sure you understand the (surprisingly complex) numbers it throws at you before
 you do major surgery on your data structures.</p>
 <aside name="cachegrind">
-
 <p>Unfortunately, most of those tools aren&#8217;t cheap. If you&#8217;re on a console dev
 team, you probably already have licenses for them.</p>
 <p>If not, an excellent free option is
@@ -279,7 +260,6 @@ team, you probably already have licenses for them.</p>
 program on top of a simulated CPU and cache hierarchy and then reports all of
 the cache interactions.</p>
 </aside>
-
 <p>That being said, cache misses <em>will</em> affect the performance of your game. While
 you shouldn&#8217;t spend a ton of time pre-emptively optimizing for cache usage, do
 think about how cache-friendly your data structures are throughout the design
@@ -294,12 +274,10 @@ name="virtual">pointers or references</span>. But going through a pointer means
 hopping across memory, which leads to the cache misses this pattern works to
 avoid.</p>
 <aside name="virtual">
-
 <p>The other half of interfaces is <em>virtual method calls</em>. Those require the CPU to
 look up an object&#8217;s vtable and then find the pointer to the actual method to
 call there. So, again, you&#8217;re chasing pointers, which can cause cache misses.</p>
 </aside>
-
 <p>In order to please this pattern, you will have to sacrifice some of your
 precious abstractions. The more you design your program around data locality,
 the more you will have to give up inheritance, interfaces, and the benefits
@@ -343,12 +321,10 @@ few vectors or a matrix, and then a method to <span name="update">update</span>
 it. The details aren&#8217;t important here, but imagine something roughly along the
 lines of:</p>
 <aside name="update">
-
 <p>As the name implies, these are examples of the <a href="update-method.html"
 class="pattern">Update Method</a> pattern. Even <code>render()</code> is this pattern, just
 by another name.</p>
 </aside>
-
 <div class="codehilite"><pre><span class="k">class</span> <span class="nc">AIComponent</span>
 <span class="p">{</span>
 <span class="nl">public:</span>
@@ -444,11 +420,9 @@ organized.</p>
 <p><span name="lines"></span></p>
 <p><img src="images/data-locality-pointer-chasing.png" alt="A tangled mess of objects strewn randomly through memory with pointers wiring them all together." /></p>
 <aside name="lines">
-
 <p>Every frame, the game loop has to follow all of those arrows to get to the data
 it cares about.</p>
 </aside>
-
 <p>If our goal was to take a whirlwind tour around the game&#8217;s address space like
 some &#8220;256MB of RAM in Four Nights!&#8221; cheap vacation package, this would be a
 fantastic deal. But our goal is to run the game quickly, and <span
@@ -456,11 +430,9 @@ name="chase">traipsing</span> all over main memory is <em>not</em> the way to do
 Remember that <code>sleepFor500Cycles()</code> function? Well this code is effectively
 calling that <em>all the time</em>.</p>
 <aside name="chase">
-
 <p>The term for wasting a bunch of time traversing pointers is &#8220;pointer chasing&#8221;,
 which it turns out is nowhere near as fun as it sounds.</p>
 </aside>
-
 <p>Let&#8217;s do something better. Our first observation is that the only reason we
 follow a pointer to get to the game entity is so we can immediately follow
 <em>another</em> pointer to get to a component. <code>GameEntity</code> itself has no interesting
@@ -482,11 +454,9 @@ components, another for physics, and another for rendering.</p>
 
 
 <aside name="long-name">
-
 <p>My least favorite part about using components is how long the word &#8220;component&#8221;
 is.</p>
 </aside>
-
 <p>Let me stress that these are arrays of <em>components</em> and not <em>pointers to
 components</em>. The data is all there, one byte after the other. The game loop can
 then walk these directly:</p>
@@ -517,12 +487,10 @@ then walk these directly:</p>
 
 
 <aside name="arrow">
-
 <p>One hint that we&#8217;re doing better here is how few <code>-&gt;</code> operators there are in the
 new code. If you want to improve data locality, look for indirection operators
 you can get rid of.</p>
 </aside>
-
 <p>We&#8217;ve ditched all of that pointer chasing. Instead of skipping around in memory,
 we&#8217;re doing a straight crawl through three contiguous arrays.</p>
 <p><img src="images/data-locality-component-arrays.png" alt="An array for each of three different kinds of components. Each array neatly packs its components together." /></p>
@@ -545,11 +513,9 @@ goes straight to the data.</p>
 we&#8217;ve got all of our particles in a nice big contiguous array. Let&#8217;s wrap it in
 a little <span name="pool">manager class</span> too:</p>
 <aside name="pool">
-
 <p>The <code>ParticleSystem</code> class is an example of an <a href="object-pool.html"
 class="pattern">Object Pool</a> custom built for a single type of object.</p>
 </aside>
-
 <div class="codehilite"><pre><span class="k">class</span> <span class="nc">Particle</span>
 <span class="p">{</span>
 <span class="nl">public:</span>
@@ -612,7 +578,6 @@ particles in it, we&#8217;re back to thrashing the cache again.</p>
 actually processing aren&#8217;t contiguous in it. If it&#8217;s littered with inactive
 objects we have to dance around, we&#8217;re right back to the original problem.</p>
 <aside name="branch">
-
 <p>Savvy low-level coders can see another problem here. Doing an <code>if</code> check for
 every particle can cause a <em>branch misprediction</em> and a <em>pipeline stall</em>. In
 modern CPUs, a single &#8220;instruction&#8221; actually takes several clock cycles. To keep
@@ -632,7 +597,6 @@ processing (a <em>pipeline flush</em>) and start over. The performance impact of
 varies widely by machine, but this is why you sometimes see developers avoid
 flow control in hot code.</p>
 </aside>
-
 <p>Given the title of this section, you can probably guess the answer. Instead of
 <em>checking</em> the active flag, we&#8217;ll <em>sort</em> by it. We&#8217;ll keep all of the active
 particles in the front of the list. If we know all of those particles are
@@ -698,11 +662,9 @@ compared to assigning a pointer. But when you add in the cost of
 In <span name="profile">some cases</span>, it&#8217;s cheaper to push things around in
 memory if it helps you keep the cache full.</p>
 <aside name="profile">
-
 <p>This is your friendly reminder to <em>profile</em> when making these kinds of
 decisions.</p>
 </aside>
-
 <p>There&#8217;s a neat consequence of keeping the particles <em>sorted</em> by their active
 state&#8202;&mdash;&#8202;we don&#8217;t need to store an active flag in each particle at all. It can be
 inferred by its position in the array and the <code>numActive_</code> counter. This makes
@@ -798,12 +760,10 @@ to it, like so:</p>
 loaded into the cache is stuff we are actually processing (with the <span
 name="parallel">exception</span> of that one little pointer to the cold data).</p>
 <aside name="parallel">
-
 <p>We could conceivably ditch the pointer too by having parallel arrays for the hot
 and cold components. Then we can find the cold AI data for a component since
 both pieces will be at the same index in their respective arrays.</p>
 </aside>
-
 <p>You can see how this starts to get fuzzy, though. In my example here, it&#8217;s
 pretty obvious which data should be hot and cold, but in a real game it&#8217;s
 rarely so clear-cut.
@@ -823,12 +783,10 @@ pattern you apply to a few core data structures.</p>
 <p>The biggest questions you&#8217;ll need to answer are when and where you apply this
 pattern, but here are a couple of others that may come up.</p>
 <aside name="dod">
-
 <p>Noel Llopis&#8217; <a href="http://gamesfromwithin.com/data-oriented-design">famous article</a>
 that got a lot more people thinking about designing games around cache usage
 calls this &#8220;data-oriented design&#8221;.</p>
 </aside>
-
 <h3><a href="#how-do-you-handle-polymorphism" name="how-do-you-handle-polymorphism">How do you handle polymorphism?</a></h3>
 <p>Up to this point, we&#8217;ve avoided subclassing and virtual methods. We have assumed we
 have nice packed arrays of <em>homogenous</em> objects. That way, we know they&#8217;re all

@@ -81,18 +81,14 @@ forest, they mostly look similar. They will likely all use the <span
 name="same">same</span> mesh and textures. That means most of the fields in
 these objects are the <em>same</em> between all of those instances.</p>
 <aside name="same">
-
 <p>You&#8217;d have to be crazy or a billionaire to budget for the artists to
 individually model each tree in an entire forest.</p>
 </aside>
-
 <p><span name="trees"></span></p>
 <p><img src="images/flyweight-trees.png" alt="A row of trees, each of which has its own Mesh, Bark, Leaves, Params, and Position." /></p>
 <aside name="trees">
-
 <p>Note that the stuff in the small boxes is the same for each tree.</p>
 </aside>
-
 <p>We can model that explicitly by splitting the object in half. First, we pull
 out the data that all trees have <span name="type">in common</span> and move it
 into a separate class:</p>
@@ -127,7 +123,6 @@ tree in the world has a <em>reference</em> to that shared <code>TreeModel</code>
 <p>You can visualize it like this:</p>
 <p><img src="images/flyweight-tree-model.png" alt="A row of trees each with its own Params and Position, but pointing to a shared Model with a Mesh, Bark, and Leaves." /></p>
 <aside name="type">
-
 <p>This looks a lot like the <a href="type-object.html" class="pattern">Type
 Object</a> pattern. Both involve delegating part of an object&#8217;s state to some
 other object shared between a number of instances. However, the intent behind
@@ -136,7 +131,6 @@ the patterns differs.</p>
 define by lifting &#8220;types&#8221; into your own object model. Any memory sharing you get
 from that is a bonus. The Flyweight pattern is purely about efficiency.</p>
 </aside>
-
 <p>This is all well and good for storing stuff in main memory, but that doesn&#8217;t
 help rendering. Before the forest gets on screen, it has to work its way over to
 the GPU. We need to express this resource sharing in a way that the graphics
@@ -157,12 +151,10 @@ arboreal example. The second is the list of instances and their parameters that
 will be used to vary that first chunk of data each time it&#8217;s drawn. With a
 single draw call, an entire forest grows.</p>
 <aside name="hardware">
-
 <p>The fact that this API is implemented directly by the graphics card means the
 Flyweight pattern may be the only Gang of Four design pattern to have actual
 hardware support.</p>
 </aside>
-
 <h2><a href="#the-flyweight-pattern" name="the-flyweight-pattern">The Flyweight Pattern</a></h2>
 <p>Now that we&#8217;ve got one concrete example under our belts, I can walk you through
 the general pattern. Flyweight, like its name implies, comes into play when you
@@ -203,10 +195,8 @@ world is a huge grid of tiny tiles. Each tile is covered in one kind of terrain.
 store all of that state in <span name="learned">each</span> tile in the world.
 Instead, a common approach is to use an enum for terrain types:</p>
 <aside name="learned">
-
 <p>After all, we already learned our lesson with those trees.</p>
 </aside>
-
 <div class="codehilite"><pre><span class="k">enum</span> <span class="n">Terrain</span>
 <span class="p">{</span>
   <span class="n">TERRAIN_GRASS</span><span class="p">,</span>
@@ -228,7 +218,6 @@ Instead, a common approach is to use an enum for terrain types:</p>
 
 
 <aside name="grid">
-
 <p>Here I&#8217;m using a nested array to store the 2D grid. That&#8217;s efficient in C/C++
 because it will pack all of the elements together. In Java or other memory-
 managed languages, doing that will actually give you an array of rows where each
@@ -238,7 +227,6 @@ friendly as you&#8217;d like.</p>
 detail behind a nice 2D grid data structure. I&#8217;m doing this here just to keep it
 simple.</p>
 </aside>
-
 <p>To actually get the useful data about a tile, we do something like:</p>
 <div class="codehilite"><pre><span class="kt">int</span> <span class="n">World</span><span class="o">::</span><span class="n">getMovementCost</span><span class="p">(</span><span class="kt">int</span> <span class="n">x</span><span class="p">,</span> <span class="kt">int</span> <span class="n">y</span><span class="p">)</span>
 <span class="p">{</span>
@@ -295,7 +283,6 @@ objects are designed for.</p>
 
 
 <aside name="const">
-
 <p>You&#8217;ll notice that all of the methods here are <code>const</code>. That&#8217;s no coincidence.
 Since the same object is used in multiple contexts, if you were to modify it,
 the changes would appear in multiple places simultaneously.</p>
@@ -303,7 +290,6 @@ the changes would appear in multiple places simultaneously.</p>
 optimization that doesn&#8217;t affect the visible behavior of the app. Because of
 this, Flyweight objects are almost always immutable.</p>
 </aside>
-
 <p>But we don&#8217;t want to pay the cost of having an instance of that for each tile in
 the world. If you look at that class, you&#8217;ll notice that there&#8217;s actually
 <em>nothing</em> in there that&#8217;s specific to <em>where</em> that tile is. In flyweight terms,
@@ -377,11 +363,9 @@ Instead, we&#8217;ll just store them directly in the world:</p>
 
 
 <aside name="generate">
-
 <p>I&#8217;ll admit this isn&#8217;t the world&#8217;s greatest procedural terrain generation
 algorithm.</p>
 </aside>
-
 <p>Now instead of methods on <code>World</code> for accessing the terrain properties, we can
 expose the <code>Terrain</code> object directly:</p>
 <div class="codehilite"><pre><span class="k">const</span> <span class="n">Terrain</span><span class="o">&amp;</span> <span class="n">World</span><span class="o">::</span><span class="n">getTile</span><span class="p">(</span><span class="kt">int</span> <span class="n">x</span><span class="p">,</span> <span class="kt">int</span> <span class="n">y</span><span class="p">)</span> <span class="k">const</span>
@@ -407,11 +391,9 @@ you first have to follow the pointer in the grid to find the terrain object and
 then find the movement cost there. Chasing a pointer like this can cause a <span
 name="cache">cache miss</span>, which can slow things down.</p>
 <aside name="cache">
-
 <p>For lots more on pointer chasing and cache misses, see the chapter on <a href
 ="data-locality.html" class="pattern">Data Locality</a>.</p>
 </aside>
-
 <p>As always, the golden rule of optimization is <em>profile first</em>. Modern computer
 hardware is too complex for performance to be a game of pure reason anymore. In
 my tests for this chapter, there was no penalty for using a flyweight over an

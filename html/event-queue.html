@@ -41,11 +41,9 @@ If not, maybe &#8220;message queue&#8221;, or &#8220;event loop&#8221;, or &#822
 To refresh your memory, let&#8217;s walk through a couple of common manifestations of
 the pattern.</p>
 <aside name="message">
-
 <p>For most of the chapter, I use &#8220;event&#8221; and &#8220;message&#8221; interchangeably. Where the
 distinction matters, I&#8217;ll make it obvious.</p>
 </aside>
-
 <h3><a href="#gui-event-loops" name="gui-event-loops">GUI event loops</a></h3>
 <p>If you&#8217;ve ever done any <span name="event-driven">user interface</span>
 programming, then you&#8217;re well acquainted with <em>events</em>. Every time the user
@@ -53,12 +51,10 @@ interacts with your program&#8202;&mdash;&#8202;clicks a button, pulls down a me
 key&#8202;&mdash;&#8202;the operating system generates an event. It throws this object at your
 app, and your job is to grab it and hook it up to some interesting behavior.</p>
 <aside name="event-driven">
-
 <p>This application style is so common, it&#8217;s considered a paradigm: <a
 href="http://en.wikipedia.org/wiki/Event-driven_programming"><em>event-driven
 programming</em></a>.</p>
 </aside>
-
 <p>In order to receive these missives, somewhere deep in the bowels of your code is
 an <em>event loop</em>. It looks roughly like this:</p>
 <div class="codehilite"><pre><span class="k">while</span> <span class="p">(</span><span class="n">running</span><span class="p">)</span>
@@ -76,13 +72,11 @@ life. The interesting part is that the application <em>pulls</em> in the event w
 name="interrupt">jump</span> to some code in your app when the user pokes a
 peripheral.</p>
 <aside name="interrupt">
-
 <p>In contrast, <em>interrupts</em> from the operating system <em>do</em> work like that. When an
 interrupt happens, the OS stops whatever your app was doing and forces it to
 jump to an interrupt handler. This abruptness is why interrupts are so hard to
 work with.</p>
 </aside>
-
 <p>That means when user input comes in, it needs to go somewhere so that the
 operating system doesn&#8217;t lose it between when the device driver reported the
 input and when your app gets around to calling <code>getNextEvent()</code>. That
@@ -98,23 +92,19 @@ system. You&#8217;ll often hear &#8220;central&#8221;, &#8220;global&#8221;, or 
 It&#8217;s used for high level communication between game systems that want to stay
 decoupled.</p>
 <aside name="game-loop">
-
 <p>If you want to know <em>why</em> they aren&#8217;t event-driven, crack open the <a href="game-loop.html"
 class="pattern">Game Loop</a> chapter.</p>
 </aside>
-
 <p>Say your game has a <span name="tutorial">tutorial</span> system to display help
 boxes after specific in-game events. For example, the first time the player
 vanquishes a foul beastie, you want to show a little balloon that says, &#8220;Press X
 to grab the loot!&#8221;</p>
 <aside name="tutorial">
-
 <p>Tutorial systems are a pain to implement gracefully, and most players will spend
 only a fraction of their time using in-game help, so it feels like they aren&#8217;t
 worth the effort. But that fraction where they <em>are</em> using the tutorial can be
 invaluable for easing the player into your game.</p>
 </aside>
-
 <p>Your gameplay and combat code are likely complex enough as it is. The last thing
 you want to do is stuff a bunch of checks for triggering tutorials in there.
 Instead, you could have a central event queue. Any game system can send to it,
@@ -125,13 +115,11 @@ indicates it wants to receive &#8220;enemy died&#8221; events. This way, knowled
 enemy dying makes its way from the combat system over to the tutorial engine
 without the two being directly aware of each other.</p>
 <aside name="blackboard">
-
 <p>This model where you have a shared space that entities can post information to
 and get notified by is similar to <a
 href="http://en.wikipedia.org/wiki/Blackboard_system">blackboard systems</a> in
 the AI field.</p>
 </aside>
-
 <p><img src="images/event-queue-central.png" alt="A central event queue is read from and written to by the Combat and Tutorial code." /></p>
 <p>I thought about using this as the example for the rest of the chapter, but I&#8217;m
 not generally a fan of big global systems. Event queues don&#8217;t have to be for
@@ -147,13 +135,11 @@ and see how it goes. We&#8217;ll add a little <span name="singleton">&#8220;audi
 engine&#8221;</span> that has an API for playing a sound given an identifier and a
 volume:</p>
 <aside name="singleton">
-
 <p>While I almost always shy away from the <a href="singleton.html"
 class="gof-pattern">Singleton</a> pattern, this is one of the places where it
 may fit since the machine likely only has one set of speakers. I&#8217;m taking a
 simpler approach and just making the method static.</p>
 </aside>
-
 <div class="codehilite"><pre><span class="k">class</span> <span class="nc">Audio</span>
 <span class="p">{</span>
 <span class="nl">public:</span>
@@ -211,12 +197,10 @@ you know mixing multiple sounds together sums their waveforms. When those are
 the <em>same</em> waveform, it&#8217;s the same as <em>one</em> sound played <em>twice as loud</em>. It&#8217;s
 jarringly loud.</p>
 <aside name="hatsworth">
-
 <p>I ran into this exact issue working on <a href="http://en.wikipedia.org/wiki/Hen
 ry_Hatsworth_in_the_Puzzling_Adventure">Henry Hatsworth in the Puzzling
 Adventure</a>. My solution there is similar to what we&#8217;ll cover here.</p>
 </aside>
-
 <p>We have a related problem in boss fights when piles of minions are running
 around causing mayhem. The hardware can only play so many sounds at one time.
 When we go over that limit, sounds get ignored or cut off.</p>
@@ -259,11 +243,9 @@ like <a href="observer.html">Observer</a> and <a href="command.html">Command</a>
 will take care of this with less <span name="simple">complexity</span>. You only
 need a queue when you want to decouple something <em>in time</em>.</p>
 <aside name="simple">
-
 <p>I mention this in nearly every chapter, but it&#8217;s worth emphasizing. Complexity
 slows you down, so treat simplicity as a precious resource.</p>
 </aside>
-
 <p>I think of it in terms of pushing and pulling. You have some code A that wants
 another chunk B to do some work. The natural way for A to initiate that is by
 <em>pushing</em> the request to B.</p>
@@ -324,10 +306,8 @@ stack, so the game may keep running even though spurious events are <span
 name="log">sloshing</span> back and forth in there. A common rule to avoid this
 is to avoid <em>sending</em> events from within code that&#8217;s <em>handling</em> one.</p>
 <aside name="log">
-
 <p>A little debug logging in your event system is probably a good idea too.</p>
 </aside>
-
 <h2><a href="#sample-code" name="sample-code">Sample Code</a></h2>
 <p>We&#8217;ve already seen some code. It&#8217;s not perfect, but it has the right basic
 functionality&#8202;&mdash;&#8202;the public API we want and the right low-level audio calls. All
@@ -355,11 +335,9 @@ list</a>, or, hell, at least a <em>linked</em>
 list. But in practice, the best way to store a bunch of homogenous things is
 almost always a plain old array:</p>
 <aside name="prof">
-
 <p>Algorithm researchers get paid to publish analyses of novel data structures.
 They aren&#8217;t exactly incentivized to stick to the basics.</p>
 </aside>
-
 <ul>
 <li>
 <p>No dynamic allocation.</p>
@@ -372,11 +350,9 @@ They aren&#8217;t exactly incentivized to stick to the basics.</p>
 </li>
 </ul>
 <aside name="locality">
-
 <p>For lots more on what being &#8220;cache friendly&#8221; means, see the chapter on <a
 href="data-locality.html" class="pattern">Data Locality</a>.</p>
 </aside>
-
 <p>So let&#8217;s do that:</p>
 <div class="codehilite"><pre><span class="k">class</span> <span class="nc">Audio</span>
 <span class="p">{</span>
@@ -435,11 +411,9 @@ the sound, of course. That code needs to go somewhere, and that somewhere is an
 
 
 <aside name="update">
-
 <p>As the name implies, this is the <a href="update-method.html"
 class="pattern">Update Method</a> pattern.</p>
 </aside>
-
 <p>Now, we need to call that from somewhere convenient. What &#8220;convenient&#8221; means
 depends on your game. It may mean calling it from the main <a
 href="game-loop.html" class="pattern">game loop</a> or from a dedicated audio
@@ -529,21 +503,17 @@ markers explicit in the class:</p>
 pointer to the right. We detect an <span name="empty">empty queue</span> by
 seeing if there&#8217;s any distance between the head and tail.</p>
 <aside name="empty">
-
 <p>This is why we made the tail one <em>past</em> the last item. It means that the queue
 will be empty if the head and tail are the same index.</p>
 </aside>
-
 <p>Now we&#8217;ve got a queue&#8202;&mdash;&#8202;we can add to the end and remove from the front.
 There&#8217;s an obvious problem, though. As we run requests through the queue, the
 head and tail keep crawling to the right. Eventually, <code>tail_</code> hits the end
 of the array, and <span name="party">party time</span> is over. This is where it
 gets clever.</p>
 <aside name="party">
-
 <p>Do you want party time to be over? No. You do not.</p>
 </aside>
-
 <p><img src="images/event-queue-crawl.png" alt="The same array as before but now the head is moving towards the right, leaving available cells on the left." /></p>
 <p>Notice that while the tail is creeping forward, the <em>head</em> is too. That means
 we&#8217;ve got array elements at the <em>beginning</em> of the array that aren&#8217;t being used
@@ -592,14 +562,12 @@ that this doesn&#8217;t happen.</p>
 <p>There you go&#8202;&mdash;&#8202;a queue with <span name="capacity">no dynamic allocation</span>,
 no copying elements around, and the cache-friendliness of a simple array.</p>
 <aside name="capacity">
-
 <p>If the maximum capacity bugs you, you can use a growable array. When the queue
 gets full, allocate a new array twice the size of the current array (or some
 other multiple), then copy the items over.</p>
 <p>Even though you copy when they array grows, enqueuing an item still has constant
 <em>amortized</em> complexity.</p>
 </aside>
-
 <h3><a href="#aggregating-requests" name="aggregating-requests">Aggregating requests</a></h3>
 <p>Now that we&#8217;ve got a queue in place, we can move onto the other problems. The
 first is that multiple requests to play the same sound end up too loud. Since we
@@ -637,12 +605,10 @@ requests that will end up being collapsed later. It&#8217;s also simpler to impl
 name="slow">slow</span> if the queue is large. It may make more sense to
 aggregate in <code>update()</code> instead.</p>
 <aside name="slow">
-
 <p>Another way to avoid the <em>O(n)</em> cost of scanning the queue is to use a different
 data structure. If we use a hash table keyed on the <code>SoundId</code>, then we can check
 for duplicates in constant time.</p>
 </aside>
-
 <p>There&#8217;s something important to keep in mind here. The window of &#8220;simultaneous&#8221;
 requests that we can aggregate is only as big as the queue. If we process
 requests more quickly and the queue size stays small, then we&#8217;ll have fewer
@@ -661,7 +627,6 @@ one thread if you want to get the most out of your chip. There are infinite ways
 to distribute code across threads, but a common strategy is to move each domain
 of the game onto its own thread&#8202;&mdash;&#8202;audio, rendering, AI, etc.</p>
 <aside name="multicore">
-
 <p>Straight-line code only runs on a single core at a time. If you don&#8217;t use
 threads, even if you do the asynchronous-style programming that&#8217;s in vogue, the
 best you&#8217;ll do is keep one core busy, which is a fraction of your CPU&#8217;s
@@ -671,7 +636,6 @@ multiple independent <em>processes</em>. That lets the OS run them concurrently 
 different cores. Games are almost always a single process, so a bit of threading
 really helps.</p>
 </aside>
-
 <p>We&#8217;re in good shape to do that now that we have three critical pieces:</p>
 <ol>
 <li>
@@ -827,11 +791,9 @@ pattern for parceling out jobs to a pool of concurrently running threads.</p>
 of the possible read/write <span name="configs">configurations</span>:
 one-to-one, one-to-many, many-to-one, or many-to-many.</p>
 <aside name="configs">
-
 <p>You sometimes hear &#8220;fan-in&#8221; used to describe many-to-one communication systems
 and &#8220;fan-out&#8221; for one-to-many.</p>
 </aside>
-
 <ul>
 <li>
 <p><strong>With one writer:</strong></p>

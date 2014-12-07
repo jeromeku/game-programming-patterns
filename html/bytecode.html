@@ -41,11 +41,9 @@ name="sprawling">enormous</span>, complex codebases. Console manufacturers and
 app marketplace gatekeepers have stringent quality requirements, and a single
 crash bug can prevent your game from shipping.</p>
 <aside name="sprawling">
-
 <p>I worked on a game that had six million lines of C++ code. For comparison, the
 software controlling the Mars Curiosity rover is less than half that.</p>
 </aside>
-
 <p>At the same time, we&#8217;re expected to squeeze every drop of performance out of the
 platform. Games push hardware like nothing else, and we have to optimize
 relentlessly just to keep pace with the competition.</p>
@@ -110,13 +108,11 @@ account the parentheses and precedence, that expression <span
 name="magic">magically</span> turns into a little tree of objects like so:</p>
 <p><img src="images/bytecode-ast.png" alt="A syntax tree. The number literals are connected by operator objects." /></p>
 <aside name="magic">
-
 <p>What &#8220;magic&#8221; is this? It&#8217;s simple&#8202;&mdash;&#8202;<em>parsing</em>. A parser takes a string of
 characters and turns it into an <em>abstract syntax tree</em>, a collection of objects
 representing the grammatical structure of the text.</p>
 <p>Whip up one of these and you&#8217;ve got yourself half of a compiler.</p>
 </aside>
-
 <p>The Interpreter pattern isn&#8217;t about <em>creating</em> that tree; it&#8217;s about <em>executing</em>
 it. The way it works is pretty clever. Each object in the tree is an expression
 or a subexpression. In true object-oriented fashion, we&#8217;ll let expressions
@@ -182,20 +178,16 @@ subexpressions. Like so:</p>
 
 
 <aside name="addition">
-
 <p>I&#8217;m sure you can figure out what the implementation of multiply looks like.</p>
 </aside>
-
 <p>Pretty neat right? Just a couple of simple classes and now we can represent and
 evaluate arbitrarily complex arithmetic expressions. We just need to create the
 right objects and wire them up correctly.</p>
 <aside name="ruby">
-
 <p>Ruby was implemented like this for something like 15 years. At version 1.9, they
 switched to bytecode like this chapter describes. Look how much time I&#8217;m saving
 you!</p>
 </aside>
-
 <p>It&#8217;s a <span name="ruby">beautiful</span>, simple pattern, but it has some
 problems. Look up at the illustration. What do you see? Lots of little boxes,
 and lots of arrows between them. Code is represented as a sprawling fractal tree
@@ -266,25 +258,21 @@ in our game. It would be similar to machine code&#8202;&mdash;&#8202;dense, line
 low-level&#8202;&mdash;&#8202;but would also be handled entirely by our game so we could safely
 sandbox it.</p>
 <aside name="jit">
-
 <p>This is why many game consoles and iOS don&#8217;t allow programs to execute machine
 code loaded or generated at runtime. That&#8217;s a drag because the fastest
 programming language implementations do exactly that. They contain a
 &#8220;just-in-time&#8221; compiler, or <em>JIT</em>, that translates the language to optimized
 machine code on the fly.</p>
 </aside>
-
 <p>We&#8217;d call our little emulator a <span name="virtual"><em>virtual machine</em></span>
 (or &#8220;VM&#8221; for short), and the synthetic binary machine code it runs <em>bytecode</em>.
 It&#8217;s got the flexibility and ease of use of defining things in data, but it has better
 performance than higher-level representations like the Interpreter pattern.</p>
 <aside name="virtual">
-
 <p>In programming language circles, &#8220;virtual machine&#8221; and &#8220;interpreter&#8221; are
 synonymous, and I use them interchangeably here. When I refer to the Gang of
 Four&#8217;s Interpreter pattern, I&#8217;ll use &#8220;pattern&#8221; to make it clear.</p>
 </aside>
-
 <p>This sounds daunting, though. My goal for the rest of this chapter is to show
 you that if you keep your feature list pared down, it&#8217;s actually pretty
 approachable. Even if you end up not using this pattern yourself, you&#8217;ll at
@@ -321,21 +309,17 @@ of your engine.</p>
 own language or system-within-a-system. I&#8217;ll be doing a minimal example here,
 but in the real world, these things tend to grow like vines.</p>
 <aside name="seductive">
-
 <p>For me, game development is seductive in the same way. In both cases, I&#8217;m
 striving to create a virtual space for others to play and be creative in.</p>
 </aside>
-
 <p>Every time I see someone define a little language or a scripting system, they
 say, &#8220;Don&#8217;t worry, it will be tiny.&#8221; Then, inevitably, they add more and more
 little features until it&#8217;s a full-fledged <span name="template">language</span>.
 Except, unlike some other languages, it grew in an ad-hoc, organic fashion and
 has all of the architectural elegance of a shanty town.</p>
 <aside name="template">
-
 <p>For example, see every templating language ever.</p>
 </aside>
-
 <p>Of course, there&#8217;s nothing <em>wrong</em> with making a full-fledged language. Just
 make sure you do so deliberately. Otherwise, be very careful to control the
 scope of what your bytecode can express. Put a short leash on it before it runs
@@ -348,14 +332,12 @@ too low-level, making your users effectively write in <span
 name="assembly">assembly language</span>&#8202;&mdash;&#8202;even one of your own design&#8202;&mdash;&#8202;isn&#8217;t
 an improvement!</p>
 <aside name="assembly">
-
 <p>Challenging that assertion is the venerable game
 <a href="http://en.wikipedia.org/wiki/RoboWar">RoboWar</a>. In that game, <em>players</em> write
 little programs to control a robot in a language very similar to assembly and
 the kind of instruction sets we&#8217;ll be discussing here.</p>
 <p>It was my first introduction to assembly-like languages.</p>
 </aside>
-
 <p>Much like the Gang of Four&#8217;s Interpreter pattern, it&#8217;s assumed that you also
 have some way to <em>generate</em> the bytecode. Usually, users author their behavior
 in some higher-level format, and a tool translates that to the bytecode that our
@@ -381,11 +363,9 @@ invest real time into features that help users see what their bytecode is doing.
 Those features might not <span name="debugger">ship</span> in your game, but
 they&#8217;ll be critical to ensure that you actually <em>can</em> ship your game.</p>
 <aside name="debugger">
-
 <p>Of course, if you want your game to be moddable, then you <em>will</em> ship those
 features, and they&#8217;ll be even more important.</p>
 </aside>
-
 <h2><a href="#sample-code" name="sample-code">Sample Code</a></h2>
 <p>After the previous couple of sections, you might be surprised how
 straightforward the implementation is. First, we need to craft an instruction
@@ -443,7 +423,6 @@ This means the code for a spell is just a list of <span name="byte">bytes</span>
 &#8220;bytecode&#8221;.</p>
 <p><img src="images/bytecode-code.png" alt="A sequence of bytecode instructions: 0x00 HEALTH, 0x03 SOUND, 0x004 PARTICLES, ..." /></p>
 <aside name="byte">
-
 <p>Some bytecode VMs use more than a single byte for each instruction and have more
 complicated rules for how they are decoded. Actual machine code on common chips
 like x86 is a good bit more complex.</p>
@@ -452,7 +431,6 @@ Machine</a> and Microsoft&#8217;s
 <a href="http://en.wikipedia.org/wiki/Common_Language_Runtime">Common Language Runtime</a>,
 which forms the backbone of the .NET platform, and it&#8217;s good enough for us.</p>
 </aside>
-
 <p>To execute a single instruction, we see which primitive it is and dispatch to
 the right API method:</p>
 <div class="codehilite"><pre><span class="k">switch</span> <span class="p">(</span><span class="n">instruction</span><span class="p">)</span>
@@ -517,7 +495,6 @@ since our data is flattened, we&#8217;ll have to use the <em>order</em> of the i
 to control that. We&#8217;ll do it the same way your CPU does&#8202;&mdash;&#8202;<span
 name="stack-machine">with a stack</span>.</p>
 <aside name="stack-machine">
-
 <p>This architecture is unimaginatively called a <a href="http://en.wikipedia.org/wiki/Stack_machine"><em>stack
 machine</em></a>. Programming languages
 like <a href="http://en.wikipedia.org/wiki/Forth_(programming_language)">Forth</a>,
@@ -525,7 +502,6 @@ like <a href="http://en.wikipedia.org/wiki/Forth_(programming_language)">Forth</
 <a href="http://en.wikipedia.org/wiki/Factor_(programming_language)">Factor</a> expose this
 model directly to the user.</p>
 </aside>
-
 <div class="codehilite"><pre><span class="k">class</span> <span class="nc">VM</span>
 <span class="p">{</span>
 <span class="nl">public:</span>
@@ -615,12 +591,10 @@ We define another instruction type for a number literal like so:</p>
 
 
 <aside name="single">
-
 <p>Here, I&#8217;m reading a single byte for the value to avoid the fiddly code
 required to decode a multiple-byte integer, but in a real implementation, you&#8217;ll
 want to support literals that cover your full numeric range.</p>
 </aside>
-
 <p><img src="images/bytecode-literal.png" alt="Binary encoding of a literal instruction: 0x05 (LITERAL) followed by 123 (the value)." /></p>
 <p>It reads the next <span name="single">byte</span> in the bytecode stream <em>as a
 number</em> and pushes it onto the stack.</p>
@@ -747,10 +721,8 @@ almost like <span name="threshold">magic</span>. We push <code>0</code> for the 
 index at the beginning, and it just hangs around at the bottom of the stack until
 we finally need it for the last <code>SET_HEALTH</code> at the end.</p>
 <aside name="threshold">
-
 <p>Maybe my threshold for &#8220;magic&#8221; is a little too low here.</p>
 </aside>
-
 <h3><a href="#a-virtual-machine" name="a-virtual-machine">A virtual machine</a></h3>
 <p>I could keep going, adding more and more instructions, but this is a good place
 to stop. As it is, we&#8217;ve got a nice little VM that lets us define fairly
@@ -767,12 +739,10 @@ careful to make sure it can&#8217;t overflow that. We can even <span
 name="looping">control how much <em>time</em></span> it uses. In our instruction loop,
 we can track how many we&#8217;ve executed and bail out if it goes over some limit.</p>
 <aside name="looping">
-
 <p>Controlling execution time isn&#8217;t necessary in our sample because we don&#8217;t have
 any instructions for looping. We could limit execution time by limiting the
 total size of the bytecode. This also means our bytecode isn&#8217;t Turing-complete.</p>
 </aside>
-
 <p>There&#8217;s just one problem left: actually creating the bytecode. So far, we&#8217;ve
 taken bits of pseudocode and compiled them to bytecode by hand. Unless you&#8217;ve
 got a <em>lot</em> of free time, that&#8217;s not going to work in practice.</p>
@@ -790,12 +760,10 @@ PTSD triggered by the sight of a <span name="dragon">book</span> with a dragon
 on the cover or the words &#8220;<a href="http://en.wikipedia.org/wiki/Lex_(software)">lex</a>&#8221;
 and &#8220;<a href="http://en.wikipedia.org/wiki/Yacc">yacc</a>&rdquo;.</p>
 <aside name="dragon">
-
 <p>I&#8217;m referring, of course, to the classic text <a href="http://en.wikipedia.org/wiki/Compilers:_Principles,_Tech
 niques,_and_Tools"><em>Compilers: Principles,
 Techniques, and Tools</em></a>.</p>
 </aside>
-
 <p>In truth, compiling a text-based language isn&#8217;t that bad, though it&#8217;s a <em>bit</em>
 too broad of a topic to cram in here. However, you don&#8217;t have to do that. What I
 said we need is a <em>tool</em>&#8202;&mdash;&#8202;it doesn&#8217;t have to be a <em>compiler</em> whose input
@@ -810,17 +778,14 @@ kind of behavior you want them to create.</p>
 <p><span name="text"></span></p>
 <p><img src="images/bytecode-ui.png" alt="A mock-up of a little tree-based UI for authoring behavior." /></p>
 <aside name="text">
-
 <p>The scripting system I wrote for <a href="http://en.wikipedia.org/wiki/Henry_Hatsworth_in_the_Puzzling_Adventure">Henry Hatsworth in the Puzzling
 Adventure</a> worked like this.</p>
 </aside>
-
 <p>The nice thing about this is that your UI can make it impossible for users to
 create <span name="errors">&#8220;invalid&#8221;</span> programs. Instead of vomiting error
 messages on them, you can proactively disable buttons or provide default
 values to ensure that the thing they&#8217;ve created is valid at all points in time.</p>
 <aside name="errors">
-
 <p>I want to stress how important error-handling is. As programmers, we tend to
 view human error as a shameful personality flaw that we strive to eliminate in
 ourselves.</p>
@@ -829,7 +794,6 @@ ourselves.</p>
 fundamental part of the creative process. Handling them gracefully with features
 like undo helps your users be more creative and create better work.</p>
 </aside>
-
 <p>This spares you from designing a grammar and writing a parser for a little
 language. But, I know, some of you find UI programming equally unpleasant. Well,
 in that case, I don&#8217;t have any good news for you.</p>
@@ -843,10 +807,8 @@ but what we&#8217;re really doing is creating a language. That&#8217;s a pretty 
 design space. Exploring it can be tons of fun, so make sure you don&#8217;t forget to
 finish your game.</p>
 <aside name="failed">
-
 <p>Since this is the longest chapter in the book, it seems I failed that task.</p>
 </aside>
-
 <h3><a href="#how-do-instructions-access-the-stack" name="how-do-instructions-access-the-stack">How do instructions access the stack?</a></h3>
 <p>Bytecode VMs come in two main flavors: stack-based and register-based. In a
 stack-based VM, instructions always work from the top of the stack, like in our
